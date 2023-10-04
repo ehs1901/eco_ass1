@@ -1,4 +1,12 @@
 # History files
+# mine valg
+*.Rpro
+*.html
+*.pdf
+*.docx
+*.pptx
+*.tex
+*.md
 .Rhistory
 .Rapp.history
 
