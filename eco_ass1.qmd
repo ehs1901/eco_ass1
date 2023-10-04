@@ -34,7 +34,7 @@ Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
 library(tidyverse)
-GDP <- read_csv("~/DataScience/GDP.csv")
+GDP <- read_csv("GDP.csv")
 View(GDP)
 ```
 
@@ -43,7 +43,7 @@ Before we start calculating the GDP per inhabitant for each sub-region, we want 
 ```{r}
 # We rename one of the variables and select the ones we want
 GDP1 <- GDP |> 
-  select(year = TIME_PERIOD, geo, OBS_VALUE)
+  select(year = TIME_PERIOD, geo, gdp = OBS_VALUE)
 ```
 
 #### Dataset: Population
@@ -59,7 +59,7 @@ Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
 library(tidyverse)
-population <- read_csv("~/DataScience/population.csv")
+population <- read_csv("population.csv")
 View(population)
 ```
 
@@ -68,7 +68,15 @@ we will do the same as on the previous data set by selecting the necessary varia
 ```{r}
 # We rename one of the variables and select the ones we want
 population1 <- population |> 
-  select(year = TIME_PERIOD, geo, OBS_VALUE)
+  select(year = TIME_PERIOD, geo, population = OBS_VALUE)
 ```
 
 ### **2. GDP per Capita Calculation:** 
+
+```{r}
+merged_data <- merge(population1, GDP1) 
+```
+
+```{r}
+data_per_capita <- GDP1
+```
