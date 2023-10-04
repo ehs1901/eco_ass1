@@ -14,6 +14,8 @@ We have been tasked with analyzing Ireland, Poland, Spain, Slovenia, the Netherl
 ```{r}
 #| setup: lable
 library(tidyverse)
+library(dplyr)
+
 ```
 
 ## Del A : Sub-national GDP and GDP per Capita
@@ -97,4 +99,13 @@ merged_data <- merged_data |>
 
 In the formula we have added \*100 to get the number as a percentage and further we have included "digits=2" to limit it down to two decimal places.
 
-**3. Descriptive Analysis:**
+### **3. Descriptive Analysis:**
+
+To get a better overview of the variables "GNP per capita", we sort it from highest to lowest value.
+
+```{r}
+merged_data <- merged_data |> 
+  arrange(desc(data_per_capita))
+```
+
+We observe that ES703 (El Hierro) is the region with the highest GDP per capita.
