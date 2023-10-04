@@ -1,5 +1,9 @@
 # History files
+<<<<<<< HEAD
+#mine valg
+=======
 # mine valg
+>>>>>>> ec0f329d596ff9d3d9bb1615ec7a01fef1118bde
 *.Rpro
 *.html
 *.pdf
