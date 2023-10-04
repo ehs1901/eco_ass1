@@ -20,13 +20,30 @@ library(tidyverse)
 
 This dataset is a sub-regional GDP dataset for a selection of our European countries.
 GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region.
-The dataset shows us
+The variables relevant to us are;
+
+GEO: this variable show us the geopolitical entity.
+
+Time_Period: this variable shows us the time period in years.
+
+Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
 library(tidyverse)
 GDP <- read_csv("~/DataScience/GDP.csv")
 View(GDP)
 ```
+
+## Dataset: Population
+
+This dataset is a dataset about population for a selection of our European countries.
+Population refers to the total number of individuals of a particular species or group inhabiting a specific area or planet at a given time.The variables relevant to us are;
+
+GEO: this variable show us the geopolitical entity.
+
+Time_Period: this variable shows us the time period in years.
+
+Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
 library(tidyverse)
