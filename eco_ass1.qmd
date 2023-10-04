@@ -58,9 +58,8 @@ Time_Period: this variable shows us the time period in years.
 Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
-library(tidyverse)
 population <- read_csv("population.csv")
-View(population)
+#View(population)
 ```
 
 we will do the same as on the previous data set by selecting the necessary variables:
@@ -71,12 +70,20 @@ population1 <- population |>
   select(year = TIME_PERIOD, geo, population = OBS_VALUE)
 ```
 
-### **2. GDP per Capita Calculation:** 
+### **2. GDP per Capita Calculation:**
 
 ```{r}
-merged_data <- merge(population1, GDP1) 
+merged_data <- left_join(population1, GDP1, join_by(year, geo))
 ```
 
 ```{r}
-data_per_capita <- GDP1
+# Rydder litt
+rm(GDP, GDP1, population, population1)
+```
+
+```{r}
+merged_data <- merged_data |> 
+  mutate(
+    data_per_capita = round(100*gdp/population, digits = 2)
+  )
 ```
