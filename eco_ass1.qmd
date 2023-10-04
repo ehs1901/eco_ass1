@@ -16,7 +16,11 @@ We have been tasked with analyzing Ireland, Poland, Spain, Slovenia, the Netherl
 library(tidyverse)
 ```
 
-## Dataset: GDP
+## Del A : Sub-national GDP and GDP per Capita
+
+### **1 . Data Acquisition:**
+
+#### Dataset: GDP
 
 This dataset is a sub-regional GDP dataset for a selection of our European countries.
 GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region.
@@ -34,7 +38,15 @@ GDP <- read_csv("~/DataScience/GDP.csv")
 View(GDP)
 ```
 
-## Dataset: Population
+Before we start calculating the GDP per inhabitant for each sub-region, we want to "clean up" the dataset so that we only include the necessary variables:
+
+```{r}
+# We rename one of the variables and select the ones we want
+GDP1 <- GDP |> 
+  select(year = TIME_PERIOD, geo, OBS_VALUE)
+```
+
+#### Dataset: Population
 
 This dataset is a dataset about population for a selection of our European countries.
 Population refers to the total number of individuals of a particular species or group inhabiting a specific area or planet at a given time.The variables relevant to us are;
@@ -50,3 +62,13 @@ library(tidyverse)
 population <- read_csv("~/DataScience/population.csv")
 View(population)
 ```
+
+we will do the same as on the previous data set by selecting the necessary variables:
+
+```{r}
+# We rename one of the variables and select the ones we want
+population1 <- population |> 
+  select(year = TIME_PERIOD, geo, OBS_VALUE)
+```
+
+### **2. GDP per Capita Calculation:** 
