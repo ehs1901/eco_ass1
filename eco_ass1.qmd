@@ -12,11 +12,13 @@ library(tidyverse)
 ```
 
 ```{r}
-library(readr)
+library(tidyverse)
 GDP <- read_csv("~/DataScience/GDP.csv")
 View(GDP)
 ```
 
 ```{r}
-
+library(tidyverse)
+population <- read_csv("~/DataScience/population.csv")
+View(population)
 ```
