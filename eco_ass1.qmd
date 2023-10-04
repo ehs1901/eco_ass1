@@ -5,3 +5,18 @@ editor: visual
 ---
 
 ## test test 
+
+```{r}
+#| setup: lable
+library(tidyverse)
+```
+
+```{r}
+library(readr)
+GDP <- read_csv("~/DataScience/GDP.csv")
+View(GDP)
+```
+
+```{r}
+
+```
