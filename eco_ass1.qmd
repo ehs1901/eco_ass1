@@ -72,14 +72,21 @@ population1 <- population |>
 
 ### **2. GDP per Capita Calculation:**
 
+Now we will calculate GDP per capita for each subregion.
+The first thing we need to do is combine the two datasets into one.
+
 ```{r}
 merged_data <- left_join(population1, GDP1, join_by(year, geo))
 ```
 
 ```{r}
-# Rydder litt
+# Clean up
 rm(GDP, GDP1, population, population1)
 ```
+
+The formula we have used to find GDP per capita is:
+
+![](images/formel.png){fig-align="center"}
 
 ```{r}
 merged_data <- merged_data |> 
@@ -87,3 +94,7 @@ merged_data <- merged_data |>
     data_per_capita = round(100*gdp/population, digits = 2)
   )
 ```
+
+In the formula we have added \*100 to get the number as a percentage and further we have included "digits=2" to limit it down to two decimal places.
+
+**3. Descriptive Analysis:**
