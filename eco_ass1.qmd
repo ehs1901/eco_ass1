@@ -1,6 +1,6 @@
 ---
 title: "assignement1_eco"
-format: html
+format: pdf
 editor: visual
 ---
 
@@ -116,3 +116,35 @@ We observe that ES703 (El Hierro) is the region with the highest GDP per capita.
 On the other hand, we observe that Poland performs very poorly, with several places in Poland registering 0% in GDP per capita, indicating a low standard of living.
 It's important to note that a GDP per capita of 0 is typically not a normal or desirable economic condition for a country.
 It usually indicates severe economic challenges that require attention and action to improve the situation.
+
+Additionally, we will examine and provide interpretations for various statistical measures:
+
+1.  Mean:
+
+```{r}
+mean_data_per_capita <- mean(merged_data$data_per_capita, na.rm = TRUE) 
+  print(mean_data_per_capita)
+```
+
+2.  Min and max:
+
+```{r}
+min_data_per_capita <- min(merged_data$data_per_capita, na.rm = TRUE)
+  print(min_data_per_capita)
+max_data_per_capita <- max(merged_data$data_per_capita, na.rm = TRUE)
+  print(max_data_per_capita)
+```
+
+3.  Standard Deviation:
+
+```{r}
+std_dev_data_per_capita <- sd(merged_data$data_per_capita, na.rm = TRUE)
+  print(std_dev_data_per_capita)
+```
+
+4.  Median:
+
+```{r}
+median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
+  print(median_data_per_capita)
+```
