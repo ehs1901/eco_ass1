@@ -18,7 +18,7 @@ library(dplyr)
 
 ```
 
-## Del A : Sub-national GDP and GDP per Capita
+## Part A : Sub-national GDP and GDP per Capita
 
 ### **1 . Data Acquisition:**
 
@@ -148,3 +148,23 @@ std_dev_data_per_capita <- sd(merged_data$data_per_capita, na.rm = TRUE)
 median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
   print(median_data_per_capita)
 ```
+
+## Part B: Regional Inequity
+
+**1. Literature Review:**
+
+Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
+These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
+KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN
+
+And why do we care about regional inequality?
+
+We care about regional inequality for several reasons.
+Firstly, it is a matter of justice and social inclusion.
+Inequality among regions leads to an unfair distribution of opportunities and resources, which can create social unrest and dissatisfaction among the population.
+This can also result in certain areas being neglected and underdeveloped while others prosper economically and socially.
+
+Furthermore, regional inequality affects economic growth and stability.
+Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
+At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
+Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
