@@ -15,7 +15,9 @@ We have been tasked with analyzing Ireland, Poland, Spain, Slovenia, the Netherl
 #| setup: lable
 library(tidyverse)
 library(dplyr)
-
+library(dineq)
+library(ineq)
+library(magrittr)
 ```
 
 ## Del A : Sub-national GDP and GDP per Capita
@@ -104,7 +106,7 @@ In the formula we have added \*100 to get the number as a percentage and further
 To get a better overview of the variables "GNP per capita", we sort it from highest to lowest value.
 
 ```{r}
-merged_data <- merged_data |> 
+merged_data_desc <- merged_data |> 
   arrange(desc(data_per_capita))
 ```
 
@@ -147,4 +149,37 @@ std_dev_data_per_capita <- sd(merged_data$data_per_capita, na.rm = TRUE)
 ```{r}
 median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
   print(median_data_per_capita)
+```
+
+Gini... 😣
+
+```{r}
+merged_data_temp <- merged_data %>%
+  mutate(id_nuts3 = geo, 
+         id_nuts2 = substr(geo, 1, 4),
+         id_nuts0 = substr(geo, 1, 2)) 
+```
+
+```{r}
+merged_data_temp %<>% 
+  filter(population != "NA") %>%
+filter(population != 0) %>%
+  filter(data_per_capita != "NA") %>%
+  group_by(id_nuts2, year) %>%
+  mutate(gini_n2 = gini.wtd(data_per_capita, weights = population)) %>%
+  ungroup()
+```
+
+```{r}
+# Clean up
+rm(merged_data_temp_2, merged_data_desc)
+```
+
+--\> videre: COMMANT SOM HETER "FIRST"
+
+???
+
+```{r}
+gini_coefficient <- gini.wtd(x = merged_data$data_per_capita, weights = NULL)
+  print(gini_coefficient)
 ```
