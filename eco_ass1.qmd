@@ -15,7 +15,9 @@ We have been tasked with analyzing Ireland, Poland, Spain, Slovenia, the Netherl
 #| setup: lable
 library(tidyverse)
 library(dplyr)
-
+library(dineq)
+library(ineq)
+library(magrittr)
 ```
 
 ## Part A : Sub-national GDP and GDP per Capita
@@ -104,7 +106,7 @@ In the formula we have added \*100 to get the number as a percentage and further
 To get a better overview of the variables "GNP per capita", we sort it from highest to lowest value.
 
 ```{r}
-merged_data <- merged_data |> 
+merged_data_desc <- merged_data |> 
   arrange(desc(data_per_capita))
 ```
 
@@ -149,6 +151,7 @@ median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
   print(median_data_per_capita)
 ```
 
+<<<<<<< HEAD
 ## Part B: Regional Inequity
 
 **1. Literature Review:**
@@ -168,3 +171,37 @@ Furthermore, regional inequality affects economic growth and stability.
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
 Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
+=======
+Gini... 😣
+
+```{r}
+merged_data_temp <- merged_data %>%
+  mutate(id_nuts3 = geo, 
+         id_nuts2 = substr(geo, 1, 4),
+         id_nuts0 = substr(geo, 1, 2)) 
+```
+
+```{r}
+merged_data_temp %<>% 
+  filter(population != "NA") %>%
+filter(population != 0) %>%
+  filter(data_per_capita != "NA") %>%
+  group_by(id_nuts2, year) %>%
+  mutate(gini_n2 = gini.wtd(data_per_capita, weights = population)) %>%
+  ungroup()
+```
+
+```{r}
+# Clean up
+rm(merged_data_temp_2, merged_data_desc)
+```
+
+--\> videre: COMMANT SOM HETER "FIRST"
+
+???
+
+```{r}
+gini_coefficient <- gini.wtd(x = merged_data$data_per_capita, weights = NULL)
+  print(gini_coefficient)
+```
+>>>>>>> ef2fe403fd672a7e78a646e42e9b3801ea9d4ae8
