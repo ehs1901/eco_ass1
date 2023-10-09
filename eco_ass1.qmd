@@ -153,7 +153,7 @@ median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
 
 ## Part B: Regional Inequity
 
-**1. Literature Review:**
+### **1. Literature Review:**
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
 These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
@@ -171,7 +171,12 @@ Regions with lower levels of development can impede the national economy as they
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
 Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
 
-Gini... 😣
+### **2. Gini Coefficient Calculation:** 
+
+Next, we will calculate the population-weighted GDP Gini coefficients for each European NUTS2 level region in our countries, using the NUTS3 GDP per capita data and the formula we were given.
+
+First we use the "merge" function to create three new columns in "merged_data" by retrieving substrings from the existing "geo" column.
+This can be useful for creating categories based on different levels of NUTS geographic regions (NUTS3, NUTS2, and NUTS0) based on the first characters of "geo":
 
 ```{r}
 merged_data_temp <- merged_data %>%
@@ -179,6 +184,10 @@ merged_data_temp <- merged_data %>%
          id_nuts2 = substr(geo, 1, 4),
          id_nuts0 = substr(geo, 1, 2)) 
 ```
+
+Then we use the package "magritt" to be able to update the dataframe "merged_data_temp" with the result of the subsequent operations.
+We then need to filter out the rows that either have NA or 0 values.
+Then we group the data by column id_nuts2" and "year". Furthermore, we add a new column called "gini_n2" in the dataframe, using the formula we were given. It calculates the Gini coefficient based on "data_per_capita" and uses "population" as weight.Finally, we remove the grouping created earlier with group_by().This is useful when you want to work with the entire dataframe again after a group operation.
 
 ```{r}
 merged_data_temp %<>% 
@@ -190,16 +199,18 @@ filter(population != 0) %>%
   ungroup()
 ```
 
+### **3. Data Presentation**
+
 ```{r}
-# Clean up
-rm(merged_data_temp_2, merged_data_desc)
+summary(merged_data_temp$gini_n2)
 ```
+
+The Gini coefficients help us assess the economic inequality of a population or the distribution of income and wealth among the members of that population.
+
+The Gini coefficient is usually a value between 0 and 1, where 0 indicates complete equality (everyone has the same income or wealth), and 1 indicates complete inequality (one person has all the income or wealth, while everyone else has none).
+
+From our Gini coefficient data, inequality varies significantly, with values ​​ranging from **0.2941** (even distribution) to **0.8403** (significant concentration of income or wealth), reflecting a high degree of economic inequality within our study population.
+
+An average Gini coefficient (mean) of **0.5428** indicates a moderate to high degree of economic inequality within the surveyed population, where a few individuals or households are likely to have significantly more income or wealth than the majority of the population.
 
 --\> videre: COMMANT SOM HETER "FIRST"
-
-?
-
-```{r}
-gini_coefficient <- gini.wtd(x = merged_data$data_per_capita, weights = NULL)
-  print(gini_coefficient)
-```
