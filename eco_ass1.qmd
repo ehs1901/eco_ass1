@@ -213,4 +213,75 @@ From our Gini coefficient data, inequality varies significantly, with values ​
 
 An average Gini coefficient (mean) of **0.5428** indicates a moderate to high degree of economic inequality within the surveyed population, where a few individuals or households are likely to have significantly more income or wealth than the majority of the population.
 
+**Tester å lage plott:**
+
+```{r}
+library(ggplot2)
+library(dplyr)
+```
+
+```{r}
+ggplot(
+  data = merged_data_temp,
+  mapping = aes(x = gini_n2, y = id_nuts2)
+)
+```
+
+```{r}
+unique_nuts_2 <- merged_data_temp %>%
+  select(id_nuts2) %>%
+  distinct()
+# her ser vi at id_nuts2 inneholder 71 forksjellige regioner
+```
+
 --\> videre: COMMANT SOM HETER "FIRST"
+
+```{r}
+first_obs_per_nuts2 <- merged_data_temp %>%
+  group_by(id_nuts2) %>%
+  arrange(id_nuts2) %>%
+  filter(row_number() == 1)
+
+```
+
+```{r}
+ggplot(first_obs_per_nuts2, aes(x = gini_n2)) +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") +
+  labs(title = "Fordeling av Gini-koeffisienter for hver id_nuts2-fordeling",
+       x = "Gini-koeffisient",
+       y = "Antall observasjoner") 
+```
+
+```{r}
+ggplot(first_obs_per_nuts2, aes(x = gini_n2)) +
+  geom_histogram(binwidth = 0.05, fill = "blue", color = "black") +
+  labs(title = "Fordeling av Gini-koeffisienter for hver id_nuts2-fordeling",
+       x = "Gini-koeffisient",
+       y = "Antall observasjoner") +
+  facet_wrap(~ id_nuts2, scales = "free_x", ncol = 4)
+
+```
+
+```{r}
+ggplot(first_obs_per_nuts2, aes(x = id_nuts2, y = gini_n2)) +
+  geom_boxplot(fill = "blue", color = "black") +
+  labs(title = "Fordeling av Gini-koeffisienter for hver id_nuts2-fordeling",
+       x = "id_nuts2",
+       y = "Gini-koeffisient") +
+  theme_minimal()
+
+```
+
+```{r}
+ggplot(
+  data = first_obs_per_nuts2,
+  mapping = aes(x = gini_n2, y = id_nuts2)
+)
+```
+
+Tanker -\> må vi lage et diagram for hver id_nuts2 fordeling....?
+
+må vi bruke gjennomsnitte i hver id_nust2 fordeling....?
+hvordan skal vi gjøre dette?
+
+Lage 2 digarammer med halvparten i hver....?
