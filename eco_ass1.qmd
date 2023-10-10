@@ -171,7 +171,7 @@ Regions with lower levels of development can impede the national economy as they
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
 Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
 
-### **2. Gini Coefficient Calculation:** 
+### **2. Gini Coefficient Calculation:**
 
 Next, we will calculate the population-weighted GDP Gini coefficients for each European NUTS2 level region in our countries, using the NUTS3 GDP per capita data and the formula we were given.
 
