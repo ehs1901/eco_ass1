@@ -2,11 +2,9 @@
 title: "assignement1_eco"
 format: pdf
 editor: visual
-<<<<<<< HEAD
+
 bibliography: references.bib
-=======
 author: emilie_ingrid
->>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
 ---
 
 ## Assignment 1: Data and Descriptive
@@ -34,7 +32,8 @@ library(magrittr)
 #### Dataset: GDP
 
 This dataset is a sub-regional GDP dataset for a selection of our European countries.
-GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region @zotero-122. The variables relevant to us are;
+GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region @zotero-122.
+The variables relevant to us are;
 
 GEO: this variable show us the geopolitical entity.
 
@@ -190,10 +189,8 @@ result |>
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
 These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
-<<<<<<< HEAD
+
 @zotero-118 **KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN**
-=======
->>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
 
 And why do we care about regional inequality?
 
@@ -206,7 +203,7 @@ This can also result in certain areas being neglected and underdeveloped while o
 Furthermore, regional inequality affects economic growth and stability.
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
-Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.@zotero-118
+Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.\@zotero-118
 
 ### **2. Gini Coefficient Calculation:**
 
@@ -287,8 +284,8 @@ main_data_nuts2 <- merged_data_temp %>%
 ```
 
 ```{r}
-<<<<<<< HEAD
-=======
+
+
 ggplot(main_data_nuts2, aes(x = year, y = gini_n2, color = id_nuts2)) +
   geom_point() +
   labs(title = "Scatter Plot av Gini-koeffisienter over tid",
@@ -305,7 +302,7 @@ We can also observe that Albania has a significantly higher Gini value, slightly
 This suggests that there are substantial income inequalities within the country.
 
 ```{r}
->>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
+
 main_data_nuts2 |> 
   filter(id_nuts0 == "PL" | 
            id_nuts0 == "IE") |> 
