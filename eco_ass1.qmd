@@ -2,6 +2,10 @@
 title: "assignement1_eco"
 format: pdf
 editor: visual
+<<<<<<< HEAD
+=======
+
+>>>>>>> 0c13c02c24276c2660a9e9b8a496a0a93d8ee8f7
 bibliography: references.bib
 author: emilie_ingrid
 ---
@@ -192,7 +196,13 @@ result |>
 ### **1. Literature Review:**
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
+<<<<<<< HEAD
 These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.@zotero-118
+=======
+These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
+
+@zotero-118 **KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN**
+>>>>>>> 0c13c02c24276c2660a9e9b8a496a0a93d8ee8f7
 
 And why do we care about regional inequality?
 
@@ -205,8 +215,12 @@ This can also result in certain areas being neglected and underdeveloped while o
 Furthermore, regional inequality affects economic growth and stability.
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
+<<<<<<< HEAD
 Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
 @zotero-118
+=======
+Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.\@zotero-118
+>>>>>>> 0c13c02c24276c2660a9e9b8a496a0a93d8ee8f7
 
 ### **2. Gini Coefficient Calculation:**
 
