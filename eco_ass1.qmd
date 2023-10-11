@@ -2,7 +2,11 @@
 title: "assignement1_eco"
 format: pdf
 editor: visual
+<<<<<<< HEAD
 bibliography: references.bib
+=======
+author: emilie_ingrid
+>>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
 ---
 
 ## Assignment 1: Data and Descriptive
@@ -13,7 +17,9 @@ We will calculate GDP per capita and investigate regional disparities using vari
 We have been tasked with analyzing Ireland, Poland, Spain, Slovenia, the Netherlands, Greece, Norway, Albania from the year 2000 to 2020.
 
 ```{r}
-#| setup: lable
+#| label: setup
+#| message: false
+#| output: false
 library(tidyverse)
 library(dplyr)
 library(dineq)
@@ -37,17 +43,28 @@ Time_Period: this variable shows us the time period in years.
 Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
-library(tidyverse)
-GDP <- read_csv("GDP.csv")
-View(GDP)
+GDP <- read_csv("GDP.csv", show_col_types = FALSE)
 ```
+
+```{r}
+NO_GDP <- GDP |> 
+  filter(str_sub(geo,1,2) == "NO") |> 
+  filter(unit == "MIO_EUR")
+```
+
+```{r}
+dim(GDP)
+```
+
+To much data (all countries).
+Will reduce it after getting population.
 
 Before we start calculating the GDP per inhabitant for each sub-region, we want to "clean up" the dataset so that we only include the necessary variables:
 
 ```{r}
 # We rename one of the variables and select the ones we want
-GDP1 <- GDP |> 
-  select(year = TIME_PERIOD, geo, gdp = OBS_VALUE)
+GDP <- GDP |> 
+  select(year = TIME_PERIOD, unit, geo, gdp = OBS_VALUE)
 ```
 
 #### Dataset: Population
@@ -62,16 +79,46 @@ Time_Period: this variable shows us the time period in years.
 Obs_Value: this variable shows us the value of GDP.
 
 ```{r}
-population <- read_csv("population.csv")
-#View(population)
+population <- read_csv("population.csv", show_col_types = FALSE)
 ```
 
 we will do the same as on the previous data set by selecting the necessary variables:
 
 ```{r}
 # We rename one of the variables and select the ones we want
-population1 <- population |> 
+population <- population |> 
   select(year = TIME_PERIOD, geo, population = OBS_VALUE)
+```
+
+Find unique geo codes in population.
+Use theese to reduce GDP.
+
+```{r}
+nuts_pop <- population |> 
+  select(geo) |> 
+  distinct() |> 
+  pull()
+```
+
+```{r}
+nuts_gdp <- GDP |> 
+  select(geo) |> 
+  distinct() |> 
+  pull()
+```
+
+```{r}
+# in pop, not in GDP
+nuts_inpop_notinGDP <- setdiff(nuts_pop, nuts_gdp)
+```
+
+Reduces GDP to same zones as in population.
+
+```{r}
+GDP <- GDP |>
+  filter(geo %in% nuts_pop) |> 
+  filter(unit == "MIO_EUR") |> 
+  select(-unit)
 ```
 
 ### **2. GDP per Capita Calculation:**
@@ -80,12 +127,18 @@ Now we will calculate GDP per capita for each subregion.
 The first thing we need to do is combine the two datasets into one.
 
 ```{r}
-merged_data <- left_join(population1, GDP1, join_by(year, geo))
+merged_data <- left_join(population, GDP, join_by(year, geo)) |> 
+    filter(!geo %in% nuts_inpop_notinGDP)
+```
+
+```{r}
+NO_merged <- merged_data |> 
+  filter(str_sub(geo,1,2) == "NO") 
 ```
 
 ```{r}
 # Clean up
-rm(GDP, GDP1, population, population1)
+rm(GDP, population)
 ```
 
 The formula we have used to find GDP per capita is:
@@ -95,60 +148,40 @@ The formula we have used to find GDP per capita is:
 ```{r}
 merged_data <- merged_data |> 
   mutate(
-    data_per_capita = round(100*gdp/population, digits = 2)
-  )
+    GDP_per_capita = round(1000000*gdp/population, digits = 0)
+  ) |> 
+  rename(gdp_MIO = gdp)
 ```
 
-In the formula we have added \*100 to get the number as a percentage and further we have included "digits=2" to limit it down to two decimal places.
+In the formula we have added \*1000000 to get the number as a EUR per capita and further we have included "digits=0" to limit it down.
 
 ### **3. Descriptive Analysis:**
 
-To get a better overview of the variables "GNP per capita", we sort it from highest to lowest value.
-
-```{r}
-merged_data_desc <- merged_data |> 
-  arrange(desc(data_per_capita))
-```
-
-GDP (Gross Domestic Product) is an economic indicator that measures the average economic output per person in a country during a year.
-A high GDP per capita generally indicates a higher standard of living in a country.
-Here we see that Spain emerges as the top performer.
-We observe that ES703 (El Hierro) is the region with the highest GDP per capita.
-
-On the other hand, we observe that Poland performs very poorly, with several places in Poland registering 0% in GDP per capita, indicating a low standard of living.
-It's important to note that a GDP per capita of 0 is typically not a normal or desirable economic condition for a country.
-It usually indicates severe economic challenges that require attention and action to improve the situation.
-
 Additionally, we will examine and provide interpretations for various statistical measures:
 
-1.  Mean:
-
 ```{r}
-mean_data_per_capita <- mean(merged_data$data_per_capita, na.rm = TRUE) 
-  print(mean_data_per_capita)
+result <- merged_data |> 
+  mutate(
+    geo_2 = str_sub(geo, start = 1L, end = 2L)
+  ) |> 
+  filter(geo_2 %in% c("ES", "NO", "IE", "PL", 
+                      "NL", "AL", "EL", "SI")
+         ) |> 
+  # tar bort data for obs som ikke har verdier 
+  # for GDP helt fra 2008
+  filter(!is.na(GDP_per_capita)) |> 
+  group_by(geo_2) |> 
+  summarize(
+    Mean = mean(GDP_per_capita),
+    Variance = var(GDP_per_capita),
+    Max = max(GDP_per_capita),
+    Min = min(GDP_per_capita)
+  )
 ```
 
-2.  Min and max:
-
 ```{r}
-min_data_per_capita <- min(merged_data$data_per_capita, na.rm = TRUE)
-  print(min_data_per_capita)
-max_data_per_capita <- max(merged_data$data_per_capita, na.rm = TRUE)
-  print(max_data_per_capita)
-```
-
-3.  Standard Deviation:
-
-```{r}
-std_dev_data_per_capita <- sd(merged_data$data_per_capita, na.rm = TRUE)
-  print(std_dev_data_per_capita)
-```
-
-4.  Median:
-
-```{r}
-median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
-  print(median_data_per_capita)
+result |> 
+  knitr::kable()
 ```
 
 ## Part B: Regional Inequity
@@ -157,7 +190,10 @@ median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
 These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
+<<<<<<< HEAD
 @zotero-118 **KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN**
+=======
+>>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
 
 And why do we care about regional inequality?
 
@@ -194,16 +230,37 @@ Then we group the data by column id_nuts2" and "year". Furthermore, we add a new
 merged_data_temp %<>% 
   filter(population != "NA") %>%
 filter(population != 0) %>%
-  filter(data_per_capita != "NA") %>%
+  filter(GDP_per_capita != "NA") %>%
   group_by(id_nuts2, year) %>%
-  mutate(gini_n2 = gini.wtd(data_per_capita, weights = population)) %>%
+  mutate(gini_n2 = gini.wtd(GDP_per_capita, weights = population)) %>%
   ungroup()
 ```
 
 ### **3. Data Presentation**
 
 ```{r}
-summary(merged_data_temp$gini_n2)
+result2 <- merged_data_temp |> 
+  mutate(
+    id_nuts2 = str_sub(geo, start = 1L, end = 2L)
+  ) |> 
+  filter(id_nuts2 %in% c("ES", "NO", "IE", "PL", 
+                      "NL", "AL", "EL", "SI")
+         ) |> 
+  # tar bort data for obs som ikke har verdier 
+  # for GDP helt fra 2008
+  filter(!is.na(gini_n2)) |> 
+  group_by(id_nuts2) |> 
+  summarize(
+    Mean = mean(gini_n2),
+    Variance = var(gini_n2),
+    Max = max(gini_n2),
+    Min = min(gini_n2)
+  )
+```
+
+```{r}
+result |> 
+  knitr::kable()
 ```
 
 The Gini coefficients help us assess the economic inequality of a population or the distribution of income and wealth among the members of that population.
@@ -215,7 +272,7 @@ From our Gini coefficient data, inequality varies significantly, with values ​
 
 An average Gini coefficient (mean) of **0.5428** indicates a moderate to high degree of economic inequality within the surveyed population, where a few individuals or households are likely to have significantly more income or wealth than the majority of the population.
 
-**Tester å lage plott:**
+## **3. Data Presentation & Discussion**
 
 ```{r}
 library(ggplot2)
@@ -230,9 +287,28 @@ main_data_nuts2 <- merged_data_temp %>%
 ```
 
 ```{r}
+<<<<<<< HEAD
+=======
+ggplot(main_data_nuts2, aes(x = year, y = gini_n2, color = id_nuts2)) +
+  geom_point() +
+  labs(title = "Scatter Plot av Gini-koeffisienter over tid",
+       x = "År",
+       y = "Gini-koeffisient") +
+  theme_minimal()
+```
+
+Comment:
+
+Here is a plot of all the countries we have been tasked to analyze.
+Albania stands out as it only has data available from 2012 to 2020.
+We can also observe that Albania has a significantly higher Gini value, slightly above 0.8.
+This suggests that there are substantial income inequalities within the country.
+
+```{r}
+>>>>>>> 5e60f2534de5b3aebf2620834bd61e44a02503ed
 main_data_nuts2 |> 
-  filter(id_nuts0 == "AL" | 
-           id_nuts0 == "ES") |> 
+  filter(id_nuts0 == "PL" | 
+           id_nuts0 == "IE") |> 
   ggplot(aes(x = year, y = gini_n2, color = id_nuts2)) +
   geom_line() +
   labs(title = "Scatter Plot av Gini-koeffisienter over tid",
@@ -240,3 +316,25 @@ main_data_nuts2 |>
        y = "Gini-koeffisient") +
   theme_minimal()
 ```
+
+Comments:
+
+In our analysis, we initially examined each country individually but eventually decided to include only Poland and Ireland in the plot due to the substantial differences and variations they exhibited.
+What stands out with Poland is the extreme variability in the Gini coefficient.
+This holds true for all regions within Poland, suggesting significant fluctuations in income inequality.
+The same pattern is observed in Ireland.
+Take, for example, the "Eastern and Midland Region," which had a Gini coefficient of approximately 0.43 in 2014, decreased to around 0.41 in 2015, and then increased to nearly 0.46 in 2020.
+
+It's also worth noting Spain.
+All the regions in Spain exhibit remarkable stability throughout the time period from 2000 to 2020, but there is a significant disparity between regions in terms of Gini coefficients, ranging from the lowest to the highest values.
+Asturias has the lowest Gini coefficient, with a score of approximately 0.3, while Melilla has the highest Gini coefficient at 0.65.
+
+Last comment and conclusion;
+
+The observed variation in income inequality among regions within the assigned countries holds profound significance.
+It underscores the need for targeted, region-specific interventions to address and alleviate disparities in income distribution and advance economic equity at the local level.
+These variations in Gini coefficients indicate that a one-size-fits-all approach to economic policy may not be effective, as the factors driving income inequality can differ substantially between regions.
+
+Furthermore, this regional disparity challenges political decision-makers to prioritize and consider these differences when formulating, enacting, and evaluating economic and social policies.
+Policymakers must be mindful of the unique economic circumstances and challenges faced by different regions, and this awareness should inform the design of policies that aim to reduce income inequality and promote a more inclusive and equitable economic environment.
+The tailored, region-specific strategies can help optimize the effectiveness of such policies, ensuring that they resonate with the specific needs and realities of each region.
