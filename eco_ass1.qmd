@@ -8,7 +8,10 @@ editor: visual
 
 
 
+<<<<<<< HEAD
 
+=======
+>>>>>>> d257adfeeb6eddee03f93975e556a6c85c14958b
 bibliography: references.bib
 author: emilie_ingrid
 ---
@@ -207,7 +210,13 @@ values in Ireland (IE).
 
 ### **1. Literature Review:**
 
+<<<<<<< HEAD
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.\@zotero-118
+=======
+Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
+
+These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.\@zotero-118
+>>>>>>> d257adfeeb6eddee03f93975e556a6c85c14958b
 
 And why do we care about regional inequality?
 
@@ -218,7 +227,13 @@ This can also result in certain areas being neglected and underdeveloped while o
 @zotero-118
 
 Furthermore, regional inequality affects economic growth and stability.
+<<<<<<< HEAD
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
+=======
+Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
+
+At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
+>>>>>>> d257adfeeb6eddee03f93975e556a6c85c14958b
 
 @zotero-118
 
