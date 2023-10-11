@@ -2,7 +2,6 @@
 title: "assignement1_eco"
 format: pdf
 editor: visual
-
 bibliography: references.bib
 author: emilie_ingrid
 ---
@@ -123,12 +122,14 @@ GDP <- GDP |>
 ### **2. GDP per Capita Calculation:**
 
 Now we will calculate GDP per capita for each subregion.
-The first thing we need to do is combine the two datasets into one.
+The first thing we need to do is combine the two datasets into one:
 
 ```{r}
 merged_data <- left_join(population, GDP, join_by(year, geo)) |> 
     filter(!geo %in% nuts_inpop_notinGDP)
 ```
+
+**Hvorfor denne??**
 
 ```{r}
 NO_merged <- merged_data |> 
@@ -156,7 +157,7 @@ In the formula we have added \*1000000 to get the number as a EUR per capita and
 
 ### **3. Descriptive Analysis:**
 
-Additionally, we will examine and provide interpretations for various statistical measures:
+In addition, we will examine and provide interpretations for various statistical measures for each country:
 
 ```{r}
 result <- merged_data |> 
@@ -183,14 +184,19 @@ result |>
   knitr::kable()
 ```
 
+**Comment:** We see the mean, variance, max.
+and min. values in GDP per capita for each of the countries.
+
+It may be good to note that Ireland (IE) and Norway (NO) have the highest mean, while Albania (AL) and Poland (PO) have the lowest.
+We also see an extremely high range between min. and max.
+values in Ireland (IE).
+
 ## Part B: Regional Inequity
 
 ### **1. Literature Review:**
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
-These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
-
-@zotero-118 **KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN**
+These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.@zotero-118
 
 And why do we care about regional inequality?
 
@@ -203,7 +209,8 @@ This can also result in certain areas being neglected and underdeveloped while o
 Furthermore, regional inequality affects economic growth and stability.
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
-Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.\@zotero-118
+Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
+@zotero-118
 
 ### **2. Gini Coefficient Calculation:**
 
@@ -256,7 +263,7 @@ result2 <- merged_data_temp |>
 ```
 
 ```{r}
-result |> 
+result2 |> 
   knitr::kable()
 ```
 
