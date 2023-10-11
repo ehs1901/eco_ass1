@@ -2,6 +2,7 @@
 title: "assignement1_eco"
 format: pdf
 editor: visual
+bibliography: references.bib
 ---
 
 ## Assignment 1: Data and Descriptive
@@ -27,8 +28,7 @@ library(magrittr)
 #### Dataset: GDP
 
 This dataset is a sub-regional GDP dataset for a selection of our European countries.
-GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region.
-The variables relevant to us are;
+GDP stands for Gross Domestic Product, and it is a key economic indicator used to measure the overall economic health and performance of a country or region @zotero-122. The variables relevant to us are;
 
 GEO: this variable show us the geopolitical entity.
 
@@ -157,7 +157,7 @@ median_data_per_capita <- median(merged_data$data_per_capita, na.rm = TRUE)
 
 Regional inequality refers to the significant disparities in economic development, resource allocation, quality of life, and access to services that exist among different geographical areas within a nation or region.
 These disparities may encompass varying income levels, employment opportunities, educational standards, healthcare, and the quality of infrastructure in different regions.
-KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN
+@zotero-118 **KANSKJE SKRIVE NOE OM STUDIEN TIL ARTIKKELEN**
 
 And why do we care about regional inequality?
 
@@ -165,11 +165,12 @@ We care about regional inequality for several reasons.
 Firstly, it is a matter of justice and social inclusion.
 Inequality among regions leads to an unfair distribution of opportunities and resources, which can create social unrest and dissatisfaction among the population.
 This can also result in certain areas being neglected and underdeveloped while others prosper economically and socially.
+@zotero-118
 
 Furthermore, regional inequality affects economic growth and stability.
 Regions with lower levels of development can impede the national economy as they do not contribute optimally to economic production.
 At the same time, significant disparities among regions can threaten political stability and national unity, as they can lead to conflicts and political polarization.
-Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.
+Therefore, it is in the interest of society to reduce regional inequality to promote fairness, economic prosperity, and political harmony.@zotero-118
 
 ### **2. Gini Coefficient Calculation:**
 
@@ -208,6 +209,7 @@ summary(merged_data_temp$gini_n2)
 The Gini coefficients help us assess the economic inequality of a population or the distribution of income and wealth among the members of that population.
 
 The Gini coefficient is usually a value between 0 and 1, where 0 indicates complete equality (everyone has the same income or wealth), and 1 indicates complete inequality (one person has all the income or wealth, while everyone else has none).
+@zotero-120
 
 From our Gini coefficient data, inequality varies significantly, with values ​​ranging from **0.2941** (even distribution) to **0.8403** (significant concentration of income or wealth), reflecting a high degree of economic inequality within our study population.
 
@@ -225,17 +227,6 @@ main_data_nuts2 <- merged_data_temp %>%
   group_by(id_nuts2, year) %>%
   arrange(id_nuts2, year) %>%
   filter(row_number() == 1)
-```
-
-```{r}
-main_data_nuts2 |>
-  filter(id_nuts0=="ES",
-         year==2010) |>
-ggplot( aes(x = id_nuts2, y = gini_n2, group = 1)) +
-  geom_point(color = "blue") +
-  labs(title = "Trend i Gini-koeffisienter for Spania (ES) over time",
-       x = "Nuts2",
-       y = "Gini-koeffisient")
 ```
 
 ```{r}
