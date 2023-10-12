@@ -45,7 +45,7 @@ Time_Period: this variable shows us the time period in years.
 
 Obs_Value: this variable shows us the value of GDP.
 
-KIDLE
+@zotero-126
 
 ```{r}
 GDP <- read_csv("GDP.csv", show_col_types = FALSE)
@@ -84,7 +84,7 @@ Time_Period: this variable shows us the time period in years.
 
 Obs_Value: this variable shows us the value of population.
 
-KILDE
+@zotero-124
 
 ```{r}
 population <- read_csv("population.csv", show_col_types = FALSE)
