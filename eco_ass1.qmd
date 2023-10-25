@@ -177,8 +177,8 @@ result <- merged_data |>
   filter(geo_2 %in% c("ES", "NO", "IE", "PL", 
                       "NL", "AL", "EL", "SI")
          ) |> 
-  # tar bort data for obs som ikke har verdier 
-  # for GDP helt fra 2008
+# removes data for obs that have no values
+# for GDP since 2008
   filter(!is.na(GDP_per_capita)) |> 
   group_by(geo_2) |> 
   summarize(
@@ -388,13 +388,13 @@ country_codes <- c("ES", "PL", "NL", "SI", "EL")
 regression_models <- list()
 
 for (country_code in country_codes) {
-  # Filter the dataset for each country
-  data_country <- data_2010 %>%
+  # Filter the dataset for each country and check for data availability
+  data <- data_2010 %>%
     filter(id_nuts0 == country_code)
   
-  if (nrow(data_country) > 0) {  # Check if there is data for the country
-    # Create a regression model for the country
-    regression_model <- lm(gini_n2 ~ GDP_per_capita, data = data_country)
+  if (nrow(data) > 0) {
+    # Perform regression directly within the loop
+    regression_model <- lm(gini_n2 ~ GDP_per_capita, data = data)
     
     # Add the model to the list
     regression_models[[country_code]] <- regression_model
@@ -405,6 +405,7 @@ for (country_code in country_codes) {
     cat("No data found for", country_code, "in 2010\n")
   }
 }
+
 ```
 
 We have carried out a linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010.
@@ -451,6 +452,152 @@ These findings provide insight into how economic development may impact regional
 
 #### **2.Model Diagnostics:**
 
+1.  ES (Spain):
+
+    -   R-squared
+        (R\^2): 0.06275
+
+    -   Adjusted
+        R-squared: 0.007613
+
+    -   F-statistic:
+        1.138
+
+    -   p-value:
+        0.301\
+
+        The model for Spain has a low R-squared value, indicating that the
+        GDP_per_capita variable does not explain much of the variation in
+        gini_n2.
+        The p-value for the coefficient of GDP_per_capita is also
+        relatively high, suggesting that it may not be statistically significant.
+
+2.  PL (Poland):
+
+    -   R-squared
+        (R\^2): 0.03686
+
+    -   Adjusted
+        R-squared: -0.07015
+
+    -   F-statistic:
+        0.3445
+
+    -   p-value:
+        0.5717\
+
+        The model for Poland has a very low R-squared and a negative
+        adjusted R-squared, indicating that the GDP_per_capita variable does not
+        provide a good fit to the data.
+        The p-value for the coefficient of
+        GDP_per_capita is high, suggesting it is not statistically significant.
+
+3.  NL
+    (Netherlands):
+
+    -   R-squared
+        (R\^2): 0.3334
+
+    -   Adjusted
+        R-squared: 0.2593
+
+    -   F-statistic:
+        4.501
+
+    -   p-value:
+        0.06289\
+
+        The model for the Netherlands has a moderate R-squared value,
+        indicating that GDP_per_capita has some explanatory power, though it is
+        not very high.
+        The p-value for GDP_per_capita suggests it might be
+        marginally significant.
+
+4.  SI
+    (Slovenia):
+
+    -   R-squared
+        (R\^2): 1 (Perfect fit, but with no degrees of freedom)
+
+    -   Adjusted
+        R-squared: NaN
+
+    -   F-statistic:
+        NaN
+
+    -   p-value:
+        NA\
+
+        The model for Slovenia has a perfect R-squared of 1, but it also
+        indicates there are no degrees of freedom, suggesting a problem with the
+        model.
+        This could be due to a very small sample size.
+
+    EL (Greece):
+
+    -   R-squared
+        (R\^2): 0.4704
+
+    -   Adjusted
+        R-squared: 0.4223
+
+    -   F-statistic:
+        9.772
+
+    -   p-value:
+        0.009647\
+        The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
+        The p-value for GDP_per_capita is low, suggesting it is statistically significant.
+
+        In summary, the models for
+        Spain and Poland have low R-squared values, indicating that GDP_per_capita does
+        not explain much of the variation in gini_n2.
+        The models for the Netherlands
+        and Greece show better fits with higher R-squared values, suggesting that
+        GDP_per_capita has more explanatory power in these cases.
+        However, it's
+        essential to consider the context and the specific dataset when interpreting
+        these results.
+        Additionally, be cautious with the model for Slovenia due to the
+        lack of degrees of freedom, which may indicate issues with the data or the
+        model.
+
+    In summary, the reliability and validity of the models vary across countries.
+    Spain and Poland's models have low R-squared values, questioning their reliability and validity.
+    The Netherlands shows a somewhat better fit, but its validity depends on the context.
+    The model for Slovenia is unreliable due to a lack of degrees of freedom.
+    Finally, Greece's model appears reliable and valid, with a high R-squared and low p-value.
+    However, it's crucial to consider the specific context and dataset when interpreting these results and to be cautious with models that have low R-squared values or other statistical issues.
+
+    As some of the countries may not show a significant linear relationship between regional development and regional inequality for the year 2010.
+    This is particularly evident for Slovenia (SI), where the results indicate that there is no significant relationship due to missing data.
+
+    In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
+
+    We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
+
 #### **3.Visualization:**
+
+```{r}
+#Remove rows with missing values
+test <- data_2010[complete.cases(data_2010),]
+
+# Filter the dataset for only Spain (ES) and Netherlands (NL)
+subset_data <- subset(test, id_nuts0 %in% c("ES", "NL"))
+
+# Create a scatterplot with a regression line
+library(ggplot2)
+ggplot(subset_data, aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow") +
+  facet_wrap(~id_nuts0, ncol = 2) +  # Divide the plot into two columns
+  labs(
+    title = "Scatter Plot of Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+
+```
 
 ## References
