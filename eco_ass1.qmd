@@ -350,4 +350,107 @@ Furthermore, this regional disparity challenges political decision-makers to pri
 Policymakers must be mindful of the unique economic circumstances and challenges faced by different regions, and this awareness should inform the design of policies that aim to reduce income inequality and promote a more inclusive and equitable economic environment.
 The tailored, region-specific strategies can help optimize the effectiveness of such policies, ensuring that they resonate with the specific needs and realities of each region
 
+## Assignment 2 : Cross-Sectional Estimates
+
+### Part A: Growth and Inequity
+
+#### **1.Model Estimation:**
+
+We are taking Norway away from maindatanuts2 because we lack observations.
+
+```{r}
+main_data2 <- main_data_nuts2 |> 
+  filter(!grepl("NO", id_nuts2))
+```
+
+Furthermore, we will carry out a model estimate with regional development (yi​) as the independent variable and regional inequality (GINIWj​) as dependent variable, estimate a simple linear regression model for the year 2010.
+First, we will filter the data set main_data2 to a data set that only contains data from 2010
+
+```{r}
+data_2010 <- main_data2 |> 
+  filter(year == 2010)
+```
+
+As we see from the data set we receive, we only have data from 2010 in the countries Spain, Poland, the Netherlands, Slovenia and Greece.
+
+Simple linear regression using the "lm" function.
+Suppose "regional_development" is the column containing regional development (gini_n2), and "regional_inequality" is the column containing regional inequality ().
+
+```{r}
+# Filter the dataset for the year 2010
+data_2010 <- main_data2 %>%
+  filter(year == 2010)
+
+# List of country codes
+country_codes <- c("ES", "PL", "NL", "SI", "EL")
+
+# Create an empty list to store regression models
+regression_models <- list()
+
+for (country_code in country_codes) {
+  # Filter the dataset for each country
+  data_country <- data_2010 %>%
+    filter(id_nuts0 == country_code)
+  
+  if (nrow(data_country) > 0) {  # Check if there is data for the country
+    # Create a regression model for the country
+    regression_model <- lm(gini_n2 ~ GDP_per_capita, data = data_country)
+    
+    # Add the model to the list
+    regression_models[[country_code]] <- regression_model
+    
+    cat("Results for", country_code, "in 2010:\n")
+    print(summary(regression_model))
+  } else {
+    cat("No data found for", country_code, "in 2010\n")
+  }
+}
+```
+
+We have carried out a linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010.
+
+Dependent variable (Regional inequality - Gini coefficient): We have chosen the Gini coefficient as a measure of regional inequality, as it gives a quantitative indication of the distribution of income or wealth within a region.
+Higher Gini coefficient indicates greater inequality.
+
+Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
+
+##### Results for ES in 2010:
+
+In the linear regression for Spain (ES) in 2010, a significant p-value of 0.301 was observed for GDP per capita, with an R-squared value of 0.06275.
+This indicates that there is no significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient) in Spain in 2010.
+The low R-squared value suggests that only 6.275% of the variation in the Gini coefficient can be explained by the variability in GDP per capita.
+With a t-value of -1.067 for GDP per capita, this suggests no significant linear relationship between these two variables in Spain in 2010.
+
+##### Results for PL in 2010:
+
+For Poland (PL) in 2010, the p-value for GDP per capita was 0.5717, and the R-squared value was 0.03686.
+This again indicates no significant relationship between economic development and regional inequality for Poland in 2010.
+The high p-value and low R-squared value suggest a weak explanation of the Gini coefficient based on GDP per capita.
+
+##### Results for NL in 2010:
+
+Netherlands (NL) in 2010 exhibited a p-value of 0.0629 for GDP per capita and an R-squared value of 0.3334.
+This suggests a moderate relationship between economic development and regional inequality for the Netherlands in 2010.
+The relatively low p-value and moderate R-squared value imply that some of the variation in the Gini coefficient can be explained by the variation in GDP per capita.
+
+##### Results for SI in 2010:
+
+Results for Slovenia (SI) in 2010 are unusual.
+There is a regression error due to the absence of residual degrees of freedom, indicating insufficient variation in the data to perform a meaningful regression.
+These results should not be interpreted due to this error.
+
+##### Results for EL in 2010:
+
+Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
+The p-value was 0.00965, and the R-squared value was 0.4704.
+This indicates that an increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
+The positive estimated coefficient for GDP per capita (4.767e-06) suggests an increase in the Gini coefficient with increasing economic development.
+
+It is important to note that the results varied for each country, underscoring the significance of understanding the specific relationships in each case.
+These findings provide insight into how economic development may impact regional inequality, but further analyses and contextualization of the results for each country are essential for a more comprehensive understanding of the underlying causes of regional inequality in each case.
+
+#### **2.Model Diagnostics:**
+
+#### **3.Visualization:**
+
 ## References
