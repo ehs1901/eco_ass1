@@ -531,90 +531,24 @@ An increase in GDP per capita leads to an increase in the Gini index.
 The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
 The p-value for GDP_per_capita is low, suggesting it is statistically significant.
 
-#### 
+In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
+The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
+However, it's essential to consider the context and the specific dataset when interpreting these results.
+Additionally, be cautious with the model for Slovenia due to the lack of degrees of freedom, which may indicate issues with the data or the model.
 
-```         
--   R-squared (R\^2): 0.06275
+In summary, the reliability and validity of the models vary across countries.
+Spain and Poland's models have low R-squared values, questioning their reliability and validity.
+The Netherlands shows a somewhat better fit, but its validity depends on the context.
+The model for Slovenia is unreliable due to a lack of degrees of freedom.
+Finally, Greece's model appears reliable and valid, with a high R-squared and low p-value.
+However, it's crucial to consider the specific context and dataset when interpreting these results and to be cautious with models that have low R-squared values or other statistical issues.
 
--   Adjusted R-squared: 0.007613
+As some of the countries may not show a significant linear relationship between regional development and regional inequality for the year 2010.
+This is particularly evident for Slovenia (SI), where the results indicate that there is no significant relationship due to missing data.
 
--   F-statistic: 1.138
+In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
 
--   p-value: 0.301\
-
-    The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
-    The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
-```
-
-2.  PL (Poland):
-
-    -   R-squared (R\^2): 0.03686
-
-    -   Adjusted R-squared: -0.07015
-
-    -   F-statistic: 0.3445
-
-    -   p-value: 0.5717\
-
-        The model for Poland has a very low R-squared and a negative adjusted R-squared, indicating that the GDP_per_capita variable does not provide a good fit to the data.
-        The p-value for the coefficient of GDP_per_capita is high, suggesting it is not statistically significant.
-
-3.  NL (Netherlands):
-
-    -   R-squared (R\^2): 0.3334
-
-    -   Adjusted R-squared: 0.2593
-
-    -   F-statistic: 4.501
-
-    -   p-value: 0.06289\
-
-        The model for the Netherlands has a moderate R-squared value, indicating that GDP_per_capita has some explanatory power, though it is not very high.
-        The p-value for GDP_per_capita suggests it might be marginally significant.
-
-4.  SI (Slovenia):
-
-    -   R-squared (R\^2): 1 (Perfect fit, but with no degrees of freedom)
-
-    -   Adjusted R-squared: NaN
-
-    -   F-statistic: NaN
-
-    -   p-value: NA\
-
-        The model for Slovenia has a perfect R-squared of 1, but it also indicates there are no degrees of freedom, suggesting a problem with the model.
-        This could be due to a very small sample size.
-
-    EL (Greece):
-
-    -   R-squared (R\^2): 0.4704
-
-    -   Adjusted R-squared: 0.4223
-
-    -   F-statistic: 9.772
-
-    -   p-value: 0.009647\
-        The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
-        The p-value for GDP_per_capita is low, suggesting it is statistically significant.
-
-        In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
-        The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
-        However, it's essential to consider the context and the specific dataset when interpreting these results.
-        Additionally, be cautious with the model for Slovenia due to the lack of degrees of freedom, which may indicate issues with the data or the model.
-
-    In summary, the reliability and validity of the models vary across countries.
-    Spain and Poland's models have low R-squared values, questioning their reliability and validity.
-    The Netherlands shows a somewhat better fit, but its validity depends on the context.
-    The model for Slovenia is unreliable due to a lack of degrees of freedom.
-    Finally, Greece's model appears reliable and valid, with a high R-squared and low p-value.
-    However, it's crucial to consider the specific context and dataset when interpreting these results and to be cautious with models that have low R-squared values or other statistical issues.
-
-    As some of the countries may not show a significant linear relationship between regional development and regional inequality for the year 2010.
-    This is particularly evident for Slovenia (SI), where the results indicate that there is no significant relationship due to missing data.
-
-    In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
-
-    We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
+We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
 
 In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
 The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
@@ -634,12 +568,10 @@ This is particularly evident for Slovenia (SI), where the results indicate that 
 In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
 
 We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
-\>\>\>\>\>\>\> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
 
 #### **3.Visualization:**
 
 ```{r}
-
 #| echo = FALSE
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
