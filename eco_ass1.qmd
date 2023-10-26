@@ -515,14 +515,10 @@ Results for Slovenia (SI) in 2010 are unusual.
 There is a regression error due to the absence of residual degrees of freedom, indicating insufficient variation in the data to perform a meaningful regression.
 These results should not be interpreted due to this error.
 
-<<<<<<< HEAD
-##### Results for EL in 2010: Intresting! plott dette også! 
-=======
 The model for Slovenia has a perfect R-squared of 1, but it also indicates there are no degrees of freedom, suggesting a problem with the model.
 This could be due to a very small sample size.
 
 **Results for EL in 2010:**
->>>>>>> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
 
 Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
 The p-value was 0.010, and the R-squared value was 0.470.
@@ -537,17 +533,18 @@ The p-value for GDP_per_capita is low, suggesting it is statistically significan
 
 #### 
 
-<<<<<<< HEAD
-    -   R-squared (R\^2): 0.06275
+```         
+-   R-squared (R\^2): 0.06275
 
-    -   Adjusted R-squared: 0.007613
+-   Adjusted R-squared: 0.007613
 
-    -   F-statistic: 1.138
+-   F-statistic: 1.138
 
-    -   p-value: 0.301\
+-   p-value: 0.301\
 
-        The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
-        The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
+    The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
+    The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
+```
 
 2.  PL (Poland):
 
@@ -618,7 +615,7 @@ The p-value for GDP_per_capita is low, suggesting it is statistically significan
     In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
 
     We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
-=======
+
 In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
 The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
 However, it's essential to consider the context and the specific dataset when interpreting these results.
@@ -637,12 +634,12 @@ This is particularly evident for Slovenia (SI), where the results indicate that 
 In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
 
 We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
->>>>>>> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
+\>\>\>\>\>\>\> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
 
 #### **3.Visualization:**
 
 ```{r}
-<<<<<<< HEAD
+
 #| echo = FALSE
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
@@ -651,8 +648,7 @@ test <- data_2010[complete.cases(data_2010),]
 subset_data <- subset(test, id_nuts0 %in% c("ES", "NL"))
 
 # Create a scatterplot with a regression line
-=======
->>>>>>> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
+
 library(ggplot2)
 
 # Filter the dataset for only Spain (ES)
@@ -661,12 +657,8 @@ subset_data_es <- subset_data[subset_data$id_nuts0 == "ES", ]
 # Create a scatterplot with a regression line for Spain (ES)
 ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
   geom_point() +
-<<<<<<< HEAD
-  geom_smooth(method = "lm", formula = y ~ x, color = "skyblue") +
-  facet_wrap(~id_nuts0, ncol = 2) +  # Divide the plot into two columns
-=======
   geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
->>>>>>> 1a3b05cfa6a08bcdcdae081c02cbe4dd3c00e0ed
+
   labs(
     title = "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality",
     x = "Regional Development",
