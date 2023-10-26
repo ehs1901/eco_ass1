@@ -354,6 +354,12 @@ The tailored, region-specific strategies can help optimize the effectiveness of 
 
 ### Part A: Growth and Inequity
 
+One theory we have is that when a country's Gross Domestic Product (GDP) per capita increases, there is a corresponding decrease in the Gini coefficient, suggesting that higher economic development is associated with reduced income inequality.
+
+Economic growth is often associated with a decrease in income inequality.
+As a country's economy expands and its Gross Domestic Product (GDP) per capita increases, more opportunities for employment, better access to education, and investments in public services become possible.
+This can lead to an improvement in living standards and a more equal distribution of income among the population.
+
 #### **1.Model Estimation:**
 
 We are taking Norway away from maindatanuts2 because we lack observations.
@@ -376,6 +382,11 @@ As we see from the data set we receive, we only have data from 2010 in the count
 Simple linear regression using the "lm" function.
 Suppose "regional_development" is the column containing regional development (gini_n2), and "regional_inequality" is the column containing regional inequality (gdp per capita).
 
+Looking at each country separately in regression analysis is important.
+It helps us understand specific factors and variations in different countries.
+This approach simplifies dealing with issues like differences in data patterns and non-linear relationships unique to each country.
+By analyzing countries individually, we can get more accurate insights and make meaningful comparisons.
+
 ```{r}
 library(huxtable)
 library(broom)
@@ -396,7 +407,7 @@ for (country_code in country_codes) {
   
   if (nrow(data) > 0) {
     # Perform regression directly within the loop
-    regression_model <- lm(gini_n2 ~ I(GDP_per_capita/1000), data = data)
+    regression_model <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data)
     
     # Add the model to the list
     regression_models[[country_code]] <- regression_model
@@ -405,7 +416,7 @@ for (country_code in country_codes) {
     cat("No data found for", country_code, "in 2010\n")
   }
 }
-huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared"))
+huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 
 
 ```
@@ -417,102 +428,75 @@ Higher Gini coefficient indicates greater inequality.
 
 Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
 
-##### Results for ES in 2010:
+#### **2.Model Diagnostics:**
 
-In the linear regression for Spain (ES) in 2010, a significant p-value of 0.301 was observed for GDP per capita, with an R-squared value of 0.06275.
+**Results for ES in 2010:**
+
+In the linear regression for Spain (ES) in 2010, a significant p-value of 0.301 was observed for GDP per capita, with an R-squared value of 0.063.
 This indicates that there is no significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient) in Spain in 2010.
-The low R-squared value suggests that only 6.275% of the variation in the Gini coefficient can be explained by the variability in GDP per capita.
-With a t-value of -1.067 for GDP per capita, this suggests no significant linear relationship between these two variables in Spain in 2010.
+The low R-squared value suggests that only 6.3% of the variation in the Gini coefficient can be explained by the variability in GDP per capita.
 
-##### Results for PL in 2010:
+In the linear regression for Spain (ES) in 2010, we observed the following results: The Intercept was 0.039, and for GDP per capita (Beta for GDP per capita), the value was -0.010.
+This indicates a negative relationship between GDP per capita and the Gini index in Spain.
+In other words, as GDP per capita increases, the Gini index decreases.
 
-For Poland (PL) in 2010, the p-value for GDP per capita was 0.5717, and the R-squared value was 0.03686.
+The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
+The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
+
+**Results for PL in 2010:**
+
+For Poland (PL) in 2010, the p-value for GDP per capita was 0.572, and the R-squared value was 0.037.
 This again indicates no significant relationship between economic development and regional inequality for Poland in 2010.
 The high p-value and low R-squared value suggest a weak explanation of the Gini coefficient based on GDP per capita.
 
-##### Results for NL in 2010:
+In the case of Poland (PL) in 2010, the results were as follows: The Intercept was 0.139, and for GDP per capita (Beta for GDP per capita), the value was -0.021.
+This means there is also a negative relationship between GDP per capita and the Gini index in Poland.
+An increase in GDP per capita reduces the Gini index.
 
-Netherlands (NL) in 2010 exhibited a p-value of 0.0629 for GDP per capita and an R-squared value of 0.3334.
+The model for Poland has a very low R-squared and a negative adjusted R-squared, indicating that the GDP_per_capita variable does not provide a good fit to the data.
+The p-value for the coefficient of GDP_per_capita is high, suggesting it is not statistically significant.
+
+**Results for NL in 2010:**
+
+Netherlands (NL) in 2010 exhibited a p-value of 0.063 for GDP per capita and an R-squared value of 0.333.
 This suggests a moderate relationship between economic development and regional inequality for the Netherlands in 2010.
 The relatively low p-value and moderate R-squared value imply that some of the variation in the Gini coefficient can be explained by the variation in GDP per capita.
 
-##### Results for SI in 2010:
+Looking at the Netherlands (NL) in 2010, the results were as follows: The Intercept was 0.167, and for GDP per capita (Beta for GDP per capita), the value was -0.037.
+Again, this indicates a negative relationship between GDP per capita and the Gini index in the Netherlands.
+An increase in GDP per capita reduces the Gini index.
+
+The model for the Netherlands has a moderate R-squared value, indicating that GDP_per_capita has some explanatory power, though it is not very high.
+The p-value for GDP_per_capita suggests it might be marginally significant.
+
+**Results for SI in 2010:**
 
 Results for Slovenia (SI) in 2010 are unusual.
 There is a regression error due to the absence of residual degrees of freedom, indicating insufficient variation in the data to perform a meaningful regression.
 These results should not be interpreted due to this error.
 
-##### Results for EL in 2010:
-
-Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
-The p-value was 0.00965, and the R-squared value was 0.4704.
-This indicates that an increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
-The positive estimated coefficient for GDP per capita (4.767e-06) suggests an increase in the Gini coefficient with increasing economic development.
-
-It is important to note that the results varied for each country, underscoring the significance of understanding the specific relationships in each case.
-These findings provide insight into how economic development may impact regional inequality, but further analyses and contextualization of the results for each country are essential for a more comprehensive understanding of the underlying causes of regional inequality in each case.
-
-#### **2.Model Diagnostics:**
-
-ES, Spain:
-
-R-Squared: 0.06275
-
-Adjusted: 0.007613
-
-\
-The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
-The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
-
-PL, Poland:
-
-R-Squared: 0.03686
-
-Adjusted: -0.07015
-
-\
-The model for Poland has a very low R-squared and a negative adjusted R-squared, indicating that the GDP_per_capita variable does not provide a good fit to the data.
-The p-value for the coefficient of GDP_per_capita is high, suggesting it is not statistically significant.
-
-NL, Nederland:
-
-R-Squared: 0.334
-
-Adjusted: 0.2593\
-
-The model for the Netherlands has a moderate R-squared value, indicating that GDP_per_capita has some explanatory power, though it is not very high.
-The p-value for GDP_per_capita suggests it might be marginally significant.
-
-SI, Sloveia:
-
-R-Squared: 1
-
-Adjusted: NaN\
-
 The model for Slovenia has a perfect R-squared of 1, but it also indicates there are no degrees of freedom, suggesting a problem with the model.
 This could be due to a very small sample size.
 
-EL, Greece
+**Results for EL in 2010:**
 
-R-Squared: 0.4704
+Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
+The p-value was 0.010, and the R-squared value was 0.470.
+This indicates that an increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
 
-Adjusted: 0.4223
+For Greece (EL) in 2010, the following findings were made: The Intercept was -0.026 and for GDP per capita (Beta for GDP per capita), the value was 0.048.
+This suggests a positive relationship between GDP per capita and the Gini index for Greece.
+An increase in GDP per capita leads to an increase in the Gini index.
 
 The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
 The p-value for GDP_per_capita is low, suggesting it is statistically significant.
 
-In summary, the models for
-Spain and Poland have low R-squared values, indicating that GDP_per_capita does
-not explain much of the variation in gini_n2.
-The models for the Netherlands
-and Greece show better fits with higher R-squared values, suggesting that
-GDP_per_capita has more explanatory power in these cases.
-However, it's
-essential to consider the context and the specific dataset when interpreting
-these results.
-Additionally, be cautious with the model for Slovenia due to the
-lack of degrees of freedom, which may indicate issues with the data or the
-model.
+#### 
+
+In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
+The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
+However, it's essential to consider the context and the specific dataset when interpreting these results.
+Additionally, be cautious with the model for Slovenia due to the lack of degrees of freedom, which may indicate issues with the data or the model.
 
 In summary, the reliability and validity of the models vary across countries.
 Spain and Poland's models have low R-squared values, questioning their reliability and validity.
@@ -531,20 +515,34 @@ We can further consider including only the countries Spain (ES) and the Netherla
 #### **3.Visualization:**
 
 ```{r}
-#Remove rows with missing values
-test <- data_2010[complete.cases(data_2010),]
-
-# Filter the dataset for only Spain (ES) and Netherlands (NL)
-subset_data <- subset(test, id_nuts0 %in% c("ES", "NL"))
-
-# Create a scatterplot with a regression line
 library(ggplot2)
-ggplot(subset_data, aes(x = gini_n2, y = GDP_per_capita)) +
+
+# Filter the dataset for only Spain (ES)
+subset_data_es <- subset_data[subset_data$id_nuts0 == "ES", ]
+
+# Create a scatterplot with a regression line for Spain (ES)
+ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
   geom_point() +
-  geom_smooth(method = "lm", formula = y ~ x, color = "yellow") +
-  facet_wrap(~id_nuts0, ncol = 2) +  # Divide the plot into two columns
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
   labs(
-    title = "Scatter Plot of Regional Development vs. Regional Inequality",
+    title = "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+
+```
+
+```{r}
+# Filter the dataset for only Netherlands (NL)
+subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
+
+# Create a scatterplot with a regression line for Netherlands (NL)
+ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
+  labs(
+    title = "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality",
     x = "Regional Development",
     y = "Regional Inequality"
   ) +
