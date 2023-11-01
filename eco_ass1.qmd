@@ -621,9 +621,102 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 
 **1.Data Acquisition:**
 
-Motorways network by NUTS 2 regions**,** expressed in kilometres and kilometers per 1 000 km2.
+```{r}
+#making a new dataset only for Spain and Netherlands for 2010
+SN2010 <- data_2010 |> 
+  filter(id_nuts0 %in% c("ES", "NL"))
+```
+
+We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
+
+We hypothesize that the number of newly established companies, the area of farms, and the length of highways in a region have a significant impact on regional inequality in both Spain and the Netherlands.
+Specifically, we expect that an increase in the number of newly established companies and the area of farms in the region will be associated with a decrease in regional inequality, while an increase in highway length may also have an impact on regional inequality We can conduct analyses to test this hypothesis using statistical methods to determine if the variables indeed have a significant impact on regional inequality in the two countries.
+
+```{r}
+library(readr)
+highway <- read_csv("motorvei.csv")
+innovation <- read_csv("innovation.csv")
+farm <- read_csv("gard.csv")
+```
+
+We use the "select" command to select the columns we need as we are only interested in obs value, year and geo code.
+
+```{r}
+#we rename one of the variables and select the ones we want
+highway <- highway |> 
+  select(KM = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+farm <- farm |> 
+  select(Area = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+innovation <- innovation |> 
+  select(newfirms = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+```
+
+```{r}
+#A small comment on the dataset "innovation" is that it is data from 2013 and not 2010. So we mutate it to 2010. 
+innovation <- innovation |> 
+  mutate(year = 2010)
+```
 
 **2.Multiple Linear Regression Model:**
+
+First, we test whether newly established companies in a region have a significant impact on regional inequality in both Spain and the Netherlands.
+
+```{r}
+#we merge the dataset SN2010 and innovation together
+merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
+```
+
+```{r}
+#making a regression model with the variabels gini_n2 and newfirms
+regression_innovation <- lm(gini_n2 ~ newfirms, data = merged_innovation)
+huxreg(regression_innovation, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+Comment to the regression model; As we can read from the regression model, "new firms" does not have a significant linear relationship with regional inequality, as measured by "gini_n2," in the data set for the year 2010.
+The coefficient for "new firms" is small and not statistically significant, and the model explains very little of the variation in regional inequality.
+
+Furthermore, we will include the variable "population" as a control variable in the regression analysis to gain a better understanding of the relationship between the number of new start-up firms ("newfirms") and regional inequality ("gini_n2").
+This can help to explain any connections that may arise as a result of the size of the population in a region.
+
+```{r}
+regression_innovationp <- lm(gini_n2 ~ newfirms + population, data = merged_innovation)
+huxreg(regression_innovationp, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+Overall, the results of the regression analysis do not provide strong support for the hypothesis that the number of new start-up firms has a significant impact on regional inequality in the data set for the year 2010.
+It is important to note that this is based on available data, and there may be other factors that plays a role in regional inequality, which is not included in the model.
+
+Now we will create a new regression model to see if farms have an impact on regional inequality
+
+```{r}
+merged_farm <- left_join(merged_innovation, farm, join_by(year, id_nuts2))
+```
+
+```{r}
+regression_farm <- lm(gini_n2 ~ Area, data = merged_farm)
+huxreg(regression_farm, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+Comment to the regression modell: In summary, the results from this model can be interpreted as that changes in the regions' area do not have a significant linear relationship with regional inequality.
+The model does not provide a good explanation for the variation in "gini_n2" based on area alone.
+Although there is a positive coefficient (2.457e-09), the change in regional inequality caused by changes in area is so minimal that it is not significant enough to say that there is a linear relationship.
+
+Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the two countries.
+
+```{r}
+merged_highway <- left_join(merged_farm, highway, join_by(year, id_nuts2))
+```
+
+```{r}
+regression_highway <- lm(gini_n2 ~ KM, data = merged_highway)
+huxreg(regression_highway, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+Comment to the regression modell: We see that the coefficient is estimated at 3.448e-06.
+Again, this is a very small value.
+This small coefficient suggests that the increase in the length of highways in the regions has a very small influence on the change in the "gini_n2" value.
+In addition, the p-value for "KM" is 0.73, which is higher than the usual significance level (for example, 0.05 ).
+This indicates that the coefficient for "KM" is not significant and there is no evidence of a linear relationship between the length of highways and regional inequality (gini level) in 2010.
 
 **3.Model Interpretation:**
 
