@@ -22,6 +22,7 @@ As a result, there are a few chunks that include selections to ensure the datase
 #| label: setup
 #| message: false
 #| output: false
+#| echo: FALSE
 library(tidyverse)
 library(dplyr)
 library(dineq)
@@ -68,6 +69,7 @@ Will therefor reduce it after getting population.
 Before we start calculating the GDP per inhabitant for each sub-region, we want to "clean up" the dataset so that we only include the necessary variables:
 
 ```{r}
+#| echo: FALSE
 # We rename one of the variables and select the ones we want
 GDP <- GDP |> 
   select(year = TIME_PERIOD, unit, geo, gdp = OBS_VALUE)
@@ -147,6 +149,7 @@ NO_merged <- merged_data |>
 ```
 
 ```{r}
+#| echo: FALSE
 # Clean up just to get rid of datasets we dont need.
 rm(GDP, population)
 ```
@@ -156,6 +159,7 @@ The formula we have used to find GDP per capita is:
 ![](images/formel.png){fig-align="center"}
 
 ```{r}
+#| echo: FALSE
 merged_data <- merged_data |> 
   mutate(
     GDP_per_capita = round(1000000*gdp/population, digits = 0)
@@ -170,6 +174,7 @@ In the formula we have added \*1000000 to get the number as a EUR per capita and
 Furthermore, we will examine and provide interpretations for various statistical measures in the various countries;
 
 ```{r}
+#| echo: FALSE
 result <- merged_data |> 
   mutate(
     geo_2 = str_sub(geo, start = 1L, end = 2L)
@@ -190,6 +195,7 @@ result <- merged_data |>
 ```
 
 ```{r}
+#| echo: FALSE
 result |> 
   knitr::kable()
 ```
@@ -238,6 +244,7 @@ We then need to filter out the rows that either have NA or 0 values.
 Then we group the data by column id_nuts2" and "year". Furthermore, we add a new column called "gini_n2" in the dataframe, using the formula we were given. It calculates the Gini coefficient based on "data_per_capita" and uses "population" as weight.Finally, we remove the grouping created earlier with group_by().This is useful when you want to work with the entire dataframe again after a group operation.
 
 ```{r}
+#| echo: FALSE
 merged_data_temp %<>% 
   filter(population != "NA") %>%
 filter(population != 0) %>%
@@ -255,6 +262,7 @@ The Gini coefficient is usually a value between 0 and 1, where 0 indicates compl
 @zotero-120
 
 ```{r}
+#| echo: FALSE
 result2 <- merged_data_temp |> 
   mutate(
     id_nuts2 = str_sub(id_nuts2, start = 1L, end = 2L)
@@ -275,6 +283,7 @@ result2 <- merged_data_temp |>
 ```
 
 ```{r}
+#| echo: FALSE
 result2 |> 
   knitr::kable()
 ```
@@ -291,11 +300,13 @@ This is a much higher average value than, for example, Spain, which has the lowe
 ## **3. Data Presentation & Discussion**
 
 ```{r}
+#| echo: FALSE
 library(ggplot2)
 library(dplyr)
 ```
 
 ```{r}
+#| echo: FALSE
 main_data_nuts2 <- merged_data_temp %>%
   group_by(id_nuts2, year) %>%
   arrange(id_nuts2, year) %>%
@@ -303,6 +314,7 @@ main_data_nuts2 <- merged_data_temp %>%
 ```
 
 ```{r}
+#| echo: FALSE
 #make a plot with all nuts2 values to get an overview
 ggplot(main_data_nuts2, aes(x = year, y = gini_n2, color = id_nuts2)) +
   geom_point() +
@@ -319,7 +331,7 @@ When we look at the plot, we see that there are two regions from Ireland that ha
 Furthermore, there are a couple of regions in the Netherlands that have a Gini value of 0.224-0.241.
 
 ```{r}
-
+#| echo: FALSE
 main_data_nuts2 |> 
   filter(id_nuts0 == "PL" | 
            id_nuts0 == "ES") |> 
@@ -365,6 +377,7 @@ This can lead to an improvement in living standards and a more equal distributio
 We are taking Norway away from maindatanuts2 because we lack observations.
 
 ```{r}
+#| echo: FALSE
 main_data2 <- main_data_nuts2 |> 
   filter(!grepl("NO", id_nuts2))
 ```
@@ -373,6 +386,7 @@ Furthermore, we will carry out a model estimate with regional development (yi​
 First, we will filter the data set main_data2 to a data set that only contains data from 2010
 
 ```{r}
+#| echo: FALSE
 data_2010 <- main_data2 |> 
   filter(year == 2010)
 ```
@@ -388,6 +402,7 @@ This approach simplifies dealing with issues like differences in data patterns a
 By analyzing countries individually, we can get more accurate insights and make meaningful comparisons.
 
 ```{r}
+#| echo: FALSE
 library(huxtable)
 library(broom)
 # Filter the dataset for the year 2010
@@ -417,46 +432,6 @@ for (country_code in country_codes) {
   }
 }
 huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
-
-
-```
-
-```{r}
-library(huxtable)
-library(broom)
-#| echo = FALSE
-# Filter the dataset for the year 2010
-data_2010 <- main_data2 %>%
-  filter(year == 2010)
-
-# List of country codes
-country_codes <- c("ES", "PL", "NL", "SI", "EL")
-
-# Create an empty list to store regression models
-regression_models <- list()
-
-for (country_code in country_codes) {
-  # Filter the dataset for each country and check for data availability
-  data <- data_2010 %>%
-    filter(id_nuts0 == country_code)
-  
-  if (nrow(data) > 0) {
-    # Perform regression directly within the loop
-    regression_model <- lm(gini_n2 ~ I(GDP_per_capita/1000), data = data)
-    
-    # Add the model to the list
-    regression_models[[country_code]] <- regression_model
-    
-  } else {
-    cat("No data found for", country_code, "in 2010\n")
-  }
-}
-
-# Create a list of model summaries with adjusted R-squared
-model_summaries <- lapply(regression_models, glance)
-
-# Combine the summaries into a single data frame
-summary_data <- do.call(rbind, model_summaries)
 
 
 ```
@@ -572,7 +547,7 @@ We can further consider including only the countries Spain (ES) and the Netherla
 #### **3.Visualization:**
 
 ```{r}
-#| echo = FALSE
+#| echo: FALSE
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
 
@@ -601,6 +576,7 @@ ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
 ```
 
 ```{r}
+#| echo: FALSE
 # Filter the dataset for only Netherlands (NL)
 subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
 
@@ -622,6 +598,7 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 **1.Data Acquisition:**
 
 ```{r}
+#| echo: FALSE
 #making a new dataset only for Spain and Netherlands for 2010
 SN2010 <- data_2010 |> 
   filter(id_nuts0 %in% c("ES", "NL"))
@@ -633,15 +610,17 @@ We hypothesize that the number of newly established companies, the area of farms
 Specifically, we expect that an increase in the number of newly established companies and the area of farms in the region will be associated with a decrease in regional inequality, while an increase in highway length may also have an impact on regional inequality We can conduct analyses to test this hypothesis using statistical methods to determine if the variables indeed have a significant impact on regional inequality in the two countries.
 
 ```{r}
+#| echo: FALSE
 library(readr)
-highway <- read_csv("motorvei.csv")
-innovation <- read_csv("innovation.csv")
-farm <- read_csv("gard.csv")
+highway <- read_csv("motorvei.csv", show_col_types = FALSE)
+innovation <- read_csv("innovation.csv", show_col_types = FALSE)
+farm <- read_csv("gard.csv", show_col_types = FALSE)
 ```
 
 We use the "select" command to select the columns we need as we are only interested in obs value, year and geo code.
 
 ```{r}
+#| echo: FALSE
 #we rename one of the variables and select the ones we want
 highway <- highway |> 
   select(KM = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
@@ -652,6 +631,7 @@ innovation <- innovation |>
 ```
 
 ```{r}
+#| echo: FALSE
 #A small comment on the dataset "innovation" is that it is data from 2013 and not 2010. So we mutate it to 2010. 
 innovation <- innovation |> 
   mutate(year = 2010)
@@ -662,11 +642,13 @@ innovation <- innovation |>
 First, we test whether newly established companies in a region have a significant impact on regional inequality in both Spain and the Netherlands.
 
 ```{r}
+#| echo: FALSE
 #we merge the dataset SN2010 and innovation together
 merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 ```
 
 ```{r}
+#| echo: FALSE
 #making a regression model with the variabels gini_n2 and newfirms
 regression_innovation <- lm(gini_n2 ~ newfirms, data = merged_innovation)
 huxreg(regression_innovation, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
@@ -679,6 +661,7 @@ Furthermore, we will include the variable "population" as a control variable in 
 This can help to explain any connections that may arise as a result of the size of the population in a region.
 
 ```{r}
+#| echo: FALSE
 regression_innovationp <- lm(gini_n2 ~ newfirms + population, data = merged_innovation)
 huxreg(regression_innovationp, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
@@ -689,10 +672,12 @@ It is important to note that this is based on available data, and there may be o
 Now we will create a new regression model to see if farms have an impact on regional inequality
 
 ```{r}
+#| echo: FALSE
 merged_farm <- left_join(merged_innovation, farm, join_by(year, id_nuts2))
 ```
 
 ```{r}
+#| echo: FALSE
 regression_farm <- lm(gini_n2 ~ Area, data = merged_farm)
 huxreg(regression_farm, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
@@ -704,10 +689,12 @@ Although there is a positive coefficient (2.457e-09), the change in regional ine
 Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the two countries.
 
 ```{r}
+#| echo: FALSE
 merged_highway <- left_join(merged_farm, highway, join_by(year, id_nuts2))
 ```
 
 ```{r}
+#| echo: FALSE
 regression_highway <- lm(gini_n2 ~ KM, data = merged_highway)
 huxreg(regression_highway, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
@@ -725,4 +712,4 @@ This implies that we cannot confirm our original hypothesis that an increase in 
 This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
 Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
 
-## References
+## 
