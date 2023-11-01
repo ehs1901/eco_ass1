@@ -525,8 +525,8 @@ It is particularly important to look for positive correlations between economic 
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
 
-# Filter the dataset for only Spain (ES) and Netherlands (NL)
-subset_data <- subset(test, id_nuts0 %in% c("ES", "NL"))
+# Filter the dataset for only Spain (ES) and Netherlands (NL) and Greece (EL)
+subset_data <- subset(test, id_nuts0 %in% c("ES", "NL", "EL"))
 
 # Create a scatterplot with a regression line
 
@@ -567,21 +567,35 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 
 ```
 
+```{r}
+#| echo: FALSE
+subset_data_el <- subset_data[subset_data$id_nuts0 == "EL", ]
+
+ggplot(subset_data_el, aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
+  labs(
+    title = "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+```
+
+Comment: as we can see, both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
+If we look at Greece, on the other hand, we see that the line is going up.
+This supports our results from the regression model with that Greece shows a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita)
+
 #### Part B: Exploring Other Determinants of Inequity
 
 **1.Data Acquisition:**
 
 ```{r}
 #| echo: FALSE
-#making a new dataset only for Spain and Netherlands for 2010
+#making a new dataset only for Spain, Netherlands and Greece for 2010
 SN2010 <- data_2010 |> 
-  filter(id_nuts0 %in% c("ES", "NL"))
+  filter(id_nuts0 %in% c("ES", "NL", "EL"))
 ```
-
-We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
-
-We hypothesize that the number of newly established companies, the area of farms, and the length of highways in a region have a significant impact on regional inequality in both Spain and the Netherlands.
-Specifically, we expect that an increase in the number of newly established companies and the area of farms in the region will be associated with a decrease in regional inequality, while an increase in highway length may also have an impact on regional inequality We can conduct analyses to test this hypothesis using statistical methods to determine if the variables indeed have a significant impact on regional inequality in the two countries.
 
 ```{r}
 #| echo: FALSE
@@ -591,7 +605,13 @@ innovation <- read_csv("innovation.csv", show_col_types = FALSE)
 farm <- read_csv("gard.csv", show_col_types = FALSE)
 ```
 
-We use the "select" command to select the columns we need as we are only interested in obs value, year and geo code.
+We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
+
+We hypothesize that the number of newly established companies, farm area, and the length of highways in a region have a significant impact on regional inequality in Spain, the Netherlands, and Greece.
+More specifically, we expect that an increase in the number of newly established companies and farm area in the region will be associated with a reduction in regional inequality, while an increase in the length of highways may also impact regional inequality.
+We will conduct analyses to test this hypothesis using statistical methods to assess whether the variables indeed have a significant effect on regional inequality in the three countries.
+
+We use the "select" command to select the columns we need as we are only interested in obs value, year and geo/id_nuts2 code.
 
 ```{r}
 #| echo: FALSE
@@ -622,9 +642,37 @@ merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 ```
 
 ```{r}
+# Create a list of regression models for Spain, the Netherlands, and Greece
+regression_models_3countries <- list()
+
+# Filter the dataset for each country and check for data availability
+data_es <-  merged_innovation %>% filter(id_nuts0 == "ES")
+data_nl <- merged_innovation %>% filter(id_nuts0 == "NL")
+data_el <- merged_innovation %>% filter(id_nuts0 == "EL")
+
+# Perform regression for Spain
+regression_model_es <- lm(gini_n2 ~ newfirms, data = data_es)
+regression_models_3countries$ES <- regression_model_es
+
+# Perform regression for the Netherlands
+regression_model_nl <- lm(gini_n2 ~ newfirms, data = data_nl)
+regression_models_3countries$NL <- regression_model_nl
+
+# Perform regression for Greece
+regression_model_el <- lm(gini_n2 ~ newfirms, data = data_el)
+regression_models_3countries$EL <- regression_model_el
+
+summary(regression_model_es)
+summary(regression_model_nl)
+summary(regression_model_el)
+
+```
+
+```{r}
 #| echo: FALSE
 #making a regression model with the variabels gini_n2 and newfirms
 regression_innovation <- lm(gini_n2 ~ newfirms, data = merged_innovation)
+
 huxreg(regression_innovation, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
