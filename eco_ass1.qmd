@@ -720,4 +720,9 @@ This indicates that the coefficient for "KM" is not significant and there is no 
 
 **3.Model Interpretation:**
 
+Based on the results from our three regression models for "New Firms," "Farm," and "Highway," it appears that none of these variables have a significant linear relationship with regional inequality (gini levels) in Spain and the Netherlands in 2010.
+This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
+This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
+Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
+
 ## References
