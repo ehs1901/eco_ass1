@@ -642,6 +642,7 @@ merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 ```
 
 ```{r}
+#| echo: FALSE
 # Create a list of regression models for Spain, the Netherlands
 regression_models_2countries <- list()
 
@@ -651,13 +652,13 @@ data_nl <- merged_innovation %>% filter(id_nuts0 == "NL")
 
 # Perform regression for Spain
 regression_model_es <- lm(gini_n2 ~ newfirms, data = data_es)
-regression_models_3countries$ES <- regression_model_es
+regression_models_2countries$ES <- regression_model_es
 
 # Perform regression for the Netherlands
 regression_model_nl <- lm(gini_n2 ~ newfirms, data = data_nl)
-regression_models_3countries$NL <- regression_model_nl
+regression_models_2countries$NL <- regression_model_nl
 
-huxreg(regression_models_3countries$ES,regression_models_3countries$NL,
+huxreg(regression_models_2countries$ES,regression_models_2countries$NL,
 statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 
 ```
@@ -785,3 +786,5 @@ It was not possible to determine the relationship between newly established comp
 These findings emphasize the diversity of factors influencing regional inequality in different countries.
 While Spain exhibited significant associations between population, agricultural area, highway length, and regional inequality, the Netherlands did not show significant relationships with the selected variables.
 Further investigations and data completeness are required for a comprehensive understanding of regional inequality dynamics in Greece.
+
+## References
