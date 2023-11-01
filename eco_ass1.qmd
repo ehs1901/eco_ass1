@@ -506,43 +506,17 @@ An increase in GDP per capita leads to an increase in the Gini index.
 The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
 The p-value for GDP_per_capita is low, suggesting it is statistically significant.
 
-In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
-The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
-However, it's essential to consider the context and the specific dataset when interpreting these results.
-Additionally, be cautious with the model for Slovenia due to the lack of degrees of freedom, which may indicate issues with the data or the model.
+**Summary :**
 
-In summary, the reliability and validity of the models vary across countries.
-Spain and Poland's models have low R-squared values, questioning their reliability and validity.
-The Netherlands shows a somewhat better fit, but its validity depends on the context.
-The model for Slovenia is unreliable due to a lack of degrees of freedom.
-Finally, Greece's model appears reliable and valid, with a high R-squared and low p-value.
-However, it's crucial to consider the specific context and dataset when interpreting these results and to be cautious with models that have low R-squared values or other statistical issues.
+Furthermore, in the thesis we want to include Spain, Greece and the Netherlands.
+Will choose to include Spain (ES) and the Netherlands (NL) further in the thesis, even though they showed that the connections between GDP per capita and the Gini coefficient are often not very strong.
+This is because they still have lower p-values and higher R-squared values compared to the other countries.
+This indicates that there is a certain degree of explanatory power in these two models, although the connections may not be very strong.
 
-As some of the countries may not show a significant linear relationship between regional development and regional inequality for the year 2010.
-This is particularly evident for Slovenia (SI), where the results indicate that there is no significant relationship due to missing data.
-
-In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
-
-We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
-
-In summary, the models for Spain and Poland have low R-squared values, indicating that GDP_per_capita does not explain much of the variation in gini_n2.
-The models for the Netherlands and Greece show better fits with higher R-squared values, suggesting that GDP_per_capita has more explanatory power in these cases.
-However, it's essential to consider the context and the specific dataset when interpreting these results.
-Additionally, be cautious with the model for Slovenia due to the lack of degrees of freedom, which may indicate issues with the data or the model.
-
-In summary, the reliability and validity of the models vary across countries.
-Spain and Poland's models have low R-squared values, questioning their reliability and validity.
-The Netherlands shows a somewhat better fit, but its validity depends on the context.
-The model for Slovenia is unreliable due to a lack of degrees of freedom.
-Finally, Greece's model appears reliable and valid, with a high R-squared and low p-value.
-However, it's crucial to consider the specific context and dataset when interpreting these results and to be cautious with models that have low R-squared values or other statistical issues.
-
-As some of the countries may not show a significant linear relationship between regional development and regional inequality for the year 2010.
-This is particularly evident for Slovenia (SI), where the results indicate that there is no significant relationship due to missing data.
-
-In addition, it may appear that Poland (PL) and Greece (EL) also have weak and non-significant relationships, as shown by the high p-values ​​and low R-squared values.
-
-We can further consider including only the countries Spain (ES) and the Netherlands (NL) in the task, as these have lower p-values ​​and higher R-squared values, even if the relationships are not necessarily strong.
+In the case of Greece (EL), the results actually show a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita).
+This indicates that the increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
+Therefore, Greece will be an important country to include in our further analysis and discussion in the thesis.
+It is particularly important to look for positive correlations between economic development and regional inequality.
 
 #### **3.Visualization:**
 
@@ -711,5 +685,3 @@ Based on the results from our three regression models for "New Firms," "Farm," a
 This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
 This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
 Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
-
-## 
