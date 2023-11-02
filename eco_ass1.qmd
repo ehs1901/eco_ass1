@@ -400,9 +400,6 @@ Higher Gini coefficient indicates greater inequality.
 Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
 
 ```{r}
-#| echo: FALSE
-#| label: fig-1
-#| fig-cap: "linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010"
 library(huxtable)
 library(broom)
 # Filter the dataset for the year 2010
@@ -431,14 +428,20 @@ for (country_code in country_codes) {
     cat("No data found for", country_code, "in 2010\n")
   }
 }
-huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
-
-
 ```
+
+
+```{r}
+#| echo: FALSE
+#| label: tbl-en
+#| tbl-cap: "linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010"
+huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
 
 #### **2.Model Diagnostics:**
 
-reading off @fig-1:
+reading off @tbl-en:
 
 **Results for ES in 2010 - Model (1)**
 
@@ -513,25 +516,23 @@ This indicates that the increase in GDP per capita is associated with a signific
 Therefore, Greece will be an important country to include in our further analysis and discussion in the thesis.
 It is particularly important to look for positive correlations between economic development and regional inequality.
 
+
 #### **3.Visualization:**
 
 ```{r}
-#| echo: FALSE
-#| label: fig-2
-#| fig-cap: "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality"
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
-
 # Filter the dataset for only Spain (ES) and Netherlands (NL) and Greece (EL)
 subset_data <- subset(test, id_nuts0 %in% c("ES", "NL", "EL"))
-
-# Create a scatterplot with a regression line
-
-library(ggplot2)
-
 # Filter the dataset for only Spain (ES)
 subset_data_es <- subset_data[subset_data$id_nuts0 == "ES", ]
+```
 
+
+```{r}
+#| echo: FALSE
+#| label: fig-to
+#| fig-cap: "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality"
 # Create a scatterplot with a regression line for Spain (ES)
 ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
   geom_point() +
@@ -543,16 +544,18 @@ ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
     y = "Regional Inequality"
   ) +
   theme_minimal()
-
 ```
 
 ```{r}
+subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
+```
+
+
+```{r}
 #| echo: FALSE
-#| label: fig-3
+#| label: fig-tre
 #| fig-cap: "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality"
 # Filter the dataset for only Netherlands (NL)
-subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
-
 # Create a scatterplot with a regression line for Netherlands (NL)
 ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
   geom_point() +
@@ -563,16 +566,20 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
     y = "Regional Inequality"
   ) +
   theme_minimal()
-
 ```
 
 ```{r}
-#| echo: FALSE
-#| label: fig-4
-#| fig-cap: "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality"
 subset_data_el <- subset_data[subset_data$id_nuts0 == "EL", ]
+```
 
-ggplot(subset_data_el, aes(x = gini_n2, y = GDP_per_capita)) +
+
+```{r}
+#| echo: FALSE
+#| label: fig-fire
+#| fig-cap: "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality"
+subset_data |> 
+  filter(id_nuts0 == "EL") |> 
+  ggplot(aes(x = gini_n2, y = GDP_per_capita)) +
   geom_point() +
   geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
   labs(
@@ -583,9 +590,11 @@ ggplot(subset_data_el, aes(x = gini_n2, y = GDP_per_capita)) +
   theme_minimal()
 ```
 
-Comment: following @fig-2 and @fig-3: both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
-If we look at @fig-4, Greece, on the other hand, we see that the line is going up.
+Comment: following @fig-to and @fig-tre: both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
+If we look at @fig-fire, Greece, on the other hand, we see that the line is going up.
 This supports our results from the regression model with that Greece shows a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita).
+
+\clearpage
 
 #### Part B: Exploring Other Determinants of Inequity
 
