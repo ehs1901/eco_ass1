@@ -89,6 +89,7 @@ Obs_Value: this variable shows us the value of population.
 @zotero-124
 
 ```{r}
+#| echo: FALSE
 population <- read_csv("population.csv", show_col_types = FALSE)
 ```
 
@@ -118,6 +119,7 @@ nuts_gdp <- GDP |>
 ```
 
 ```{r}
+#| echo: FALSE
 # in pop, not in GDP
 nuts_inpop_notinGDP <- setdiff(nuts_pop, nuts_gdp)
 ```
@@ -143,6 +145,7 @@ merged_data <- left_join(population, GDP, join_by(year, geo)) |>
 ```
 
 ```{r}
+#| echo: FALSE
 #putting together a separate merge for Norway since there have been problems with both the observations in population and gdp
 NO_merged <- merged_data |> 
   filter(str_sub(geo,1,2) == "NO") 
@@ -374,35 +377,32 @@ This can lead to an improvement in living standards and a more equal distributio
 
 #### **1.Model Estimation:**
 
-We are taking Norway away from maindatanuts2 because we lack observations.
+We will carry out a model estimate with regional development (yi​) as the independent variable and regional inequality (GINIWj​) as dependent variable, and we will estimate a simple linear regression model for the year 2010.
+First, we will filter the data set main_data2 to a data set that only contains data from 2010.
 
 ```{r}
+# remove Norway as we were not going to use it further in the assignment as mentioned earlier
 #| echo: FALSE
 main_data2 <- main_data_nuts2 |> 
   filter(!grepl("NO", id_nuts2))
 ```
 
-Furthermore, we will carry out a model estimate with regional development (yi​) as the independent variable and regional inequality (GINIWj​) as dependent variable, estimate a simple linear regression model for the year 2010.
-First, we will filter the data set main_data2 to a data set that only contains data from 2010
-
-```{r}
-#| echo: FALSE
-data_2010 <- main_data2 |> 
-  filter(year == 2010)
-```
-
 As we see from the data set we receive, we only have data from 2010 in the countries Spain, Poland, the Netherlands, Slovenia and Greece.
 
-Simple linear regression using the "lm" function.
-Suppose "regional_development" is the column containing regional development (gini_n2), and "regional_inequality" is the column containing regional inequality (gdp per capita).
-
-Looking at each country separately in regression analysis is important.
+We want to look at each country separately in the regression analysis.
 It helps us understand specific factors and variations in different countries.
-This approach simplifies dealing with issues like differences in data patterns and non-linear relationships unique to each country.
-By analyzing countries individually, we can get more accurate insights and make meaningful comparisons.
+This approach simplifies dealing with issues such as differences in data patterns and non-linearities unique to each country.
+By analyzing countries individually, we can gain more accurate insights and make meaningful comparisons.
+
+Dependent variable (Regional inequality - Gini coefficient): We have chosen the Gini coefficient as a measure of regional inequality, as it gives a quantitative indication of the distribution of income/wealth within a region.
+Higher Gini coefficient indicates greater inequality.
+
+Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
 
 ```{r}
 #| echo: FALSE
+#| label: fig-1
+#| fig-cap: "linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010"
 library(huxtable)
 library(broom)
 # Filter the dataset for the year 2010
@@ -436,16 +436,11 @@ huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regress
 
 ```
 
-We have carried out a linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010.
-
-Dependent variable (Regional inequality - Gini coefficient): We have chosen the Gini coefficient as a measure of regional inequality, as it gives a quantitative indication of the distribution of income/wealth within a region.
-Higher Gini coefficient indicates greater inequality.
-
-Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
-
 #### **2.Model Diagnostics:**
 
-**Results for ES in 2010:**
+reading off @fig-1:
+
+**Results for ES in 2010 - Model (1)**
 
 In the linear regression for Spain (ES) in 2010, a significant p-value of 0.301 was observed for GDP per capita, with an R-squared value of 0.063.
 This indicates that there is no significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient) in Spain in 2010.
@@ -458,7 +453,7 @@ In other words, as GDP per capita increases, the Gini index decreases.
 The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
 The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
 
-**Results for PL in 2010:**
+**Results for PL in 2010 - Model (2)**
 
 For Poland (PL) in 2010, the p-value for GDP per capita was 0.572, and the R-squared value was 0.037.
 This again indicates no significant relationship between economic development and regional inequality for Poland in 2010.
@@ -471,7 +466,7 @@ An increase in GDP per capita reduces the Gini index.
 The model for Poland has a very low R-squared and a negative adjusted R-squared, indicating that the GDP_per_capita variable does not provide a good fit to the data.
 The p-value for the coefficient of GDP_per_capita is high, suggesting it is not statistically significant.
 
-**Results for NL in 2010:**
+**Results for NL in 2010 - Model (3)**
 
 Netherlands (NL) in 2010 exhibited a p-value of 0.063 for GDP per capita and an R-squared value of 0.333.
 This suggests a moderate relationship between economic development and regional inequality for the Netherlands in 2010.
@@ -484,7 +479,7 @@ An increase in GDP per capita reduces the Gini index.
 The model for the Netherlands has a moderate R-squared value, indicating that GDP_per_capita has some explanatory power, though it is not very high.
 The p-value for GDP_per_capita suggests it might be marginally significant.
 
-**Results for SI in 2010:**
+**Results for SI in 2010 - Model (4)**
 
 Results for Slovenia (SI) in 2010 are unusual.
 There is a regression error due to the absence of residual degrees of freedom, indicating insufficient variation in the data to perform a meaningful regression.
@@ -493,7 +488,7 @@ These results should not be interpreted due to this error.
 The model for Slovenia has a perfect R-squared of 1, but it also indicates there are no degrees of freedom, suggesting a problem with the model.
 This could be due to a very small sample size.
 
-**Results for EL in 2010:**
+**Results for EL in 2010 - Model (5)**
 
 Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
 The p-value was 0.010, and the R-squared value was 0.470.
@@ -522,6 +517,8 @@ It is particularly important to look for positive correlations between economic 
 
 ```{r}
 #| echo: FALSE
+#| label: fig-2
+#| fig-cap: "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality"
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
 
@@ -551,6 +548,8 @@ ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
 
 ```{r}
 #| echo: FALSE
+#| label: fig-3
+#| fig-cap: "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality"
 # Filter the dataset for only Netherlands (NL)
 subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
 
@@ -569,6 +568,8 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 
 ```{r}
 #| echo: FALSE
+#| label: fig-4
+#| fig-cap: "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality"
 subset_data_el <- subset_data[subset_data$id_nuts0 == "EL", ]
 
 ggplot(subset_data_el, aes(x = gini_n2, y = GDP_per_capita)) +
@@ -582,9 +583,9 @@ ggplot(subset_data_el, aes(x = gini_n2, y = GDP_per_capita)) +
   theme_minimal()
 ```
 
-Comment: as we can see, both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
-If we look at Greece, on the other hand, we see that the line is going up.
-This supports our results from the regression model with that Greece shows a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita)
+Comment: following @fig-2 and @fig-3: both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
+If we look at @fig-4, Greece, on the other hand, we see that the line is going up.
+This supports our results from the regression model with that Greece shows a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita).
 
 #### Part B: Exploring Other Determinants of Inequity
 
@@ -610,8 +611,6 @@ We have chosen to add three data sets that we will use as variables into our sub
 We hypothesize that the number of newly established companies, farm area, and the length of highways in a region have a significant impact on regional inequality in Spain, the Netherlands, and Greece.
 More specifically, we expect that an increase in the number of newly established companies and farm area in the region will be associated with a reduction in regional inequality, while an increase in the length of highways may also impact regional inequality.
 We will conduct analyses to test this hypothesis using statistical methods to assess whether the variables indeed have a significant effect on regional inequality in the three countries.
-
-We use the "select" command to select the columns we need as we are only interested in obs value, year and geo/id_nuts2 code.
 
 ```{r}
 #| echo: FALSE
@@ -665,12 +664,12 @@ statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.valu
 
 Comment to the regression:
 
-For Spain, a linear regression analysis was conducted to assess the relationship between the number of newly established companies (newfirms) and regional inequality (Gini coefficient) in 2010.
+For Spain (1), a linear regression analysis was conducted to assess the relationship between the number of newly established companies (newfirms) and regional inequality (Gini coefficient) in 2010.
 The results show no significant linear relationship between these two variables, with a p-value of 0.444.
 The low R-squared value (0.03486) also indicates limited explanatory power, with only 3.486% of the variation in the Gini coefficient explained by the variation in the number of newly established companies.
 This suggests that the number of new firms alone is not sufficient to explain regional inequality in Spain.
 
-Similarly, for the Netherlands, a similar analysis was performed, and the results are consistent.
+Similarly, for the Netherlands (2), a similar analysis was performed, and the results are consistent.
 There is also no significant linear relationship between the number of newly established companies and the Gini coefficient, with a p-value of 0.6316.
 The R-squared value is low (0.02663), indicating that only 2.663% of the variation in the Gini coefficient can be explained by the variation in the number of newly established companies.
 This suggests that in the Netherlands in 2010, the number of new firms does not have a significant impact on regional inequality.
@@ -679,13 +678,14 @@ Furthermore, we will include the variable "population" as a control variable in 
 This can help to explain any connections that may arise as a result of the size of the population in a region.
 
 ```{r}
+#| echo: FALSE
 # Making a regression model with the variables gini_n2, newfirms, and population
 regression_innovationp_es <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "ES"))
 regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "NL"))
 huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Spain (ES):
+Spain (1):
 
 The regression analysis for Spain indicates a significant positive relationship between the number of newly established companies and regional inequality in 2010.
 For each increase in the number of new firms, regional inequality increases.
@@ -693,7 +693,7 @@ At the same time, the analysis shows a negative relationship between population 
 This means that areas with larger populations have lower regional inequality.
 The model for Spain is statistically significant and explains 27.35% of the variation in regional inequality.
 
-Netherlands (NL):
+Netherlands (2):
 
 The regression analysis for the Netherlands shows that neither the number of newly established companies nor population size has a significant impact on regional inequality in 2010.
 This means that the variation in these factors does not explain the variation in regional inequality in the Netherlands.
@@ -715,25 +715,25 @@ regression_farm_el <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter
 huxreg(regression_farm_es, regression_farm_nl, regression_farm_el, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Spain (ES):
+Spain (1):
 
 For Spain, the results indicate a moderate positive relationship between agricultural area ("farm") and regional inequality (Gini coefficient).
 The p-value is 0.0309, which is lower than the typical significance level of 0.05, suggesting that agricultural area may have a significant impact on regional inequality.
 The adjusted R-squared is 0.2014, meaning that 20.14% of the variation in the Gini coefficient can be explained by the variation in agricultural area.
 
-Netherlands (NL):
+Netherlands (2):
 
 For the Netherlands, the results show no significant relationship between agricultural area and regional inequality.
 The p-value is 0.532, which is higher than the usual significance level, indicating that agricultural area does not have a significant impact on regional inequality.
 The adjusted R-squared is -0.06125, suggesting that agricultural area does not provide a good fit to the data.
 
-Greece (EL):
+Greece (3):
 
 For Greece, the results also indicate no significant relationship between agricultural area and regional inequality.
 The p-value is 0.283, which is higher than the usual significance level, suggesting that agricultural area does not have a significant impact on regional inequality.
 The adjusted R-squared is 0.2712, meaning that 27.12% of the variation in the Gini coefficient can be explained by the variation in agricultural area.
 
-Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the three countries.
+Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the countries.
 There is also missing values from Greece in this dataset so the regression will only be for Spain and Netherlands.
 
 ```{r}
@@ -748,13 +748,13 @@ regression_highway_nl <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% fi
 huxreg(regression_highway_es, regression_highway_nl, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Spain (ES):
+Spain (1):
 
 For Spain, the results suggest a moderate positive relationship between the length of highways (in units of 100,000 kilometers) and regional inequality (Gini coefficient).
 The p-value is 0.0386, which is less than the typical significance level of 0.05, indicating that highway length may have a significant impact on regional inequality.
 The adjusted R-squared is 0.08889, implying that approximately 8.89% of the variation in the Gini coefficient can be explained by the variation in highway length.
 
-Netherlands (NL):
+Netherlands (2):
 
 In contrast, for the Netherlands, the results show no significant relationship between highway length (in units of 100,000 kilometers) and regional inequality.
 The p-value is 0.9213, which is higher than the usual significance level, suggesting that highway length does not have a significant impact on regional inequality.
@@ -762,16 +762,11 @@ The adjusted R-squared is -0.04947, indicating that highway length is not a good
 
 **3.Model Interpretation:**
 
-<<<<<<< HEAD
 Based on the results from our three regression models for "New Firms," "Farm," and "Highway," it appears that none of these variables have a significant linear relationship with regional inequality (gini levels) in Spain and the Netherlands in 2010.
 This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
 This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
 Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
 
-```{r}
-rm(data, data_el, data_es, data_nl, farm, highway, innovation, main_data2, merged_data, merged_innovation,model_summaries,NO_GDP, NO_merged, subset_data, subset_data_el)
-```
-=======
 In summary, the regression analyses for Spain, the Netherlands, and Greece have revealed varying relationships between certain factors and regional inequality.
 
 Spain (ES):
@@ -798,4 +793,3 @@ While Spain exhibited significant associations between population, agricultural 
 Further investigations and data completeness are required for a comprehensive understanding of regional inequality dynamics in Greece.
 
 ## References
->>>>>>> 4582ec2fc9d335c3c1e3f51d535db10ed71b33c0
