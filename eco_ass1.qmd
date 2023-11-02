@@ -1,5 +1,5 @@
 ---
-title: "Assignment 1: Data and Descriptive"
+title: "Assignments - econometrics"
 format: pdf
 editor: visual
 bibliography: references.bib
@@ -28,6 +28,9 @@ library(dplyr)
 library(dineq)
 library(ineq)
 library(magrittr)
+library(huxtable)
+library(broom)
+library(readr)
 ```
 
 ## Part A : Sub-national GDP and GDP per Capita
@@ -365,7 +368,7 @@ Furthermore, this regional disparity challenges political decision-makers to pri
 Policymakers must be mindful of the unique economic circumstances and challenges faced by different regions, and this awareness should inform the design of policies that aim to reduce income inequality and promote a more inclusive and equitable economic environment.
 The tailored, region-specific strategies can help optimize the effectiveness of such policies, ensuring that they resonate with the specific needs and realities of each region
 
-## Assignment 2 : Cross-Sectional Estimates
+# Assignment 2 : Cross-Sectional Estimates
 
 ### Part A: Growth and Inequity
 
@@ -381,8 +384,8 @@ We will carry out a model estimate with regional development (yi​) as the inde
 First, we will filter the data set main_data2 to a data set that only contains data from 2010.
 
 ```{r}
-# remove Norway as we were not going to use it further in the assignment as mentioned earlier
 #| echo: FALSE
+# remove Norway as we were not going to use it further in the assignment as mentioned earlier
 main_data2 <- main_data_nuts2 |> 
   filter(!grepl("NO", id_nuts2))
 ```
@@ -400,8 +403,7 @@ Higher Gini coefficient indicates greater inequality.
 Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
 
 ```{r}
-library(huxtable)
-library(broom)
+#| echo: FALSE
 # Filter the dataset for the year 2010
 data_2010 <- main_data2 %>%
   filter(year == 2010)
@@ -430,14 +432,12 @@ for (country_code in country_codes) {
 }
 ```
 
-
 ```{r}
 #| echo: FALSE
 #| label: tbl-en
 #| tbl-cap: "linear regression analysis to assess the relationship between regional development (dependent variable) and regional inequality (independent variable) for the countries in the dataset for the year 2010"
 huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
-
 
 #### **2.Model Diagnostics:**
 
@@ -516,10 +516,10 @@ This indicates that the increase in GDP per capita is associated with a signific
 Therefore, Greece will be an important country to include in our further analysis and discussion in the thesis.
 It is particularly important to look for positive correlations between economic development and regional inequality.
 
-
 #### **3.Visualization:**
 
 ```{r}
+#| echo: FALSE
 #Remove rows with missing values
 test <- data_2010[complete.cases(data_2010),]
 # Filter the dataset for only Spain (ES) and Netherlands (NL) and Greece (EL)
@@ -527,7 +527,6 @@ subset_data <- subset(test, id_nuts0 %in% c("ES", "NL", "EL"))
 # Filter the dataset for only Spain (ES)
 subset_data_es <- subset_data[subset_data$id_nuts0 == "ES", ]
 ```
-
 
 ```{r}
 #| echo: FALSE
@@ -547,9 +546,9 @@ ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
 ```
 
 ```{r}
+#| echo: FALSE
 subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
 ```
-
 
 ```{r}
 #| echo: FALSE
@@ -569,9 +568,9 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 ```
 
 ```{r}
+#| echo: FALSE
 subset_data_el <- subset_data[subset_data$id_nuts0 == "EL", ]
 ```
-
 
 ```{r}
 #| echo: FALSE
@@ -609,13 +608,13 @@ SN2010 <- data_2010 |>
 
 ```{r}
 #| echo: FALSE
-library(readr)
 highway <- read_csv("motorvei2.csv", show_col_types = FALSE)
 innovation <- read_csv("innovation.csv", show_col_types = FALSE)
 farm <- read_csv("farm1.csv", show_col_types = FALSE)
 ```
 
 We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
+@zotero-124 @zotero-126 @zotero-148
 
 We hypothesize that the number of newly established companies, farm area, and the length of highways in a region have a significant impact on regional inequality in Spain, the Netherlands, and Greece.
 More specifically, we expect that an increase in the number of newly established companies and farm area in the region will be associated with a reduction in regional inequality, while an increase in the length of highways may also impact regional inequality.
@@ -651,6 +650,8 @@ merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 
 ```{r}
 #| echo: FALSE
+#| label: tbl-to
+#| tbl-cap: "regression models for Spain, the Netherlands - innovation"
 # Create a list of regression models for Spain, the Netherlands
 regression_models_2countries <- list()
 
@@ -671,7 +672,7 @@ statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.valu
 
 ```
 
-Comment to the regression:
+Comment to @tbl-to
 
 For Spain (1), a linear regression analysis was conducted to assess the relationship between the number of newly established companies (newfirms) and regional inequality (Gini coefficient) in 2010.
 The results show no significant linear relationship between these two variables, with a p-value of 0.444.
@@ -691,8 +692,16 @@ This can help to explain any connections that may arise as a result of the size 
 # Making a regression model with the variables gini_n2, newfirms, and population
 regression_innovationp_es <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "ES"))
 regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "NL"))
+```
+
+```{r}
+#| echo: FALSE
+#| label: tbl-three
+#| tbl-cap: "regression models for Spain, the Netherlands - innovation and population"
 huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
+
+Comment to @tbl-three
 
 Spain (1):
 
@@ -718,11 +727,15 @@ merged_farm <- left_join(SN2010, farm, join_by(year, id_nuts2))
 
 ```{r}
 #| echo: FALSE
+#| label: tbl-four
+#| tbl-cap: "regression models for Spain,Netherlands and greece - farm"
 regression_farm_es <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "ES"))
 regression_farm_nl <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "NL"))
 regression_farm_el <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "EL"))
 huxreg(regression_farm_es, regression_farm_nl, regression_farm_el, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
+
+comment to @tbl-four
 
 Spain (1):
 
@@ -752,10 +765,14 @@ merged_highway <- left_join(merged_farm, highway, join_by(year, id_nuts2))
 
 ```{r}
 #| echo: FALSE
+#| label: tbl-five
+#| tbl-cap: "regression models for Spain and the Netherlands  - highway"
 regression_highway_es <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "ES"))
 regression_highway_nl <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "NL"))
 huxreg(regression_highway_es, regression_highway_nl, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
+
+comment on @tbl-five:
 
 Spain (1):
 
