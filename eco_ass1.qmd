@@ -600,9 +600,9 @@ SN2010 <- data_2010 |>
 ```{r}
 #| echo: FALSE
 library(readr)
-highway <- read_csv("motorvei.csv", show_col_types = FALSE)
+highway <- read_csv("motorvei2.csv", show_col_types = FALSE)
 innovation <- read_csv("innovation.csv", show_col_types = FALSE)
-farm <- read_csv("gard.csv", show_col_types = FALSE)
+farm <- read_csv("farm1.csv", show_col_types = FALSE)
 ```
 
 We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
@@ -633,7 +633,7 @@ innovation <- innovation |>
 
 **2.Multiple Linear Regression Model:**
 
-First, we test whether newly established companies in a region have a significant impact on regional inequality in both Spain and the Netherlands.
+The one data set we have chosen to include as a variable does not have data from Greece, so we will only get figures for Spain and the Netherlands when we look at whether new firms have an impact on regional inequality.
 
 ```{r}
 #| echo: FALSE
@@ -642,73 +642,99 @@ merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 ```
 
 ```{r}
-# Create a list of regression models for Spain, the Netherlands, and Greece
-regression_models_3countries <- list()
+#| echo: FALSE
+# Create a list of regression models for Spain, the Netherlands
+regression_models_2countries <- list()
 
 # Filter the dataset for each country and check for data availability
 data_es <-  merged_innovation %>% filter(id_nuts0 == "ES")
 data_nl <- merged_innovation %>% filter(id_nuts0 == "NL")
-data_el <- merged_innovation %>% filter(id_nuts0 == "EL")
 
 # Perform regression for Spain
 regression_model_es <- lm(gini_n2 ~ newfirms, data = data_es)
-regression_models_3countries$ES <- regression_model_es
+regression_models_2countries$ES <- regression_model_es
 
 # Perform regression for the Netherlands
 regression_model_nl <- lm(gini_n2 ~ newfirms, data = data_nl)
-regression_models_3countries$NL <- regression_model_nl
+regression_models_2countries$NL <- regression_model_nl
 
-# Perform regression for Greece
-regression_model_el <- lm(gini_n2 ~ newfirms, data = data_el)
-regression_models_3countries$EL <- regression_model_el
-
-summary(regression_model_es)
-summary(regression_model_nl)
-summary(regression_model_el)
+huxreg(regression_models_2countries$ES,regression_models_2countries$NL,
+statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 
 ```
 
-```{r}
-#| echo: FALSE
-#making a regression model with the variabels gini_n2 and newfirms
-regression_innovation <- lm(gini_n2 ~ newfirms, data = merged_innovation)
+Comment to the regression:
 
-huxreg(regression_innovation, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
-```
+For Spain, a linear regression analysis was conducted to assess the relationship between the number of newly established companies (newfirms) and regional inequality (Gini coefficient) in 2010.
+The results show no significant linear relationship between these two variables, with a p-value of 0.444.
+The low R-squared value (0.03486) also indicates limited explanatory power, with only 3.486% of the variation in the Gini coefficient explained by the variation in the number of newly established companies.
+This suggests that the number of new firms alone is not sufficient to explain regional inequality in Spain.
 
-Comment to the regression model; As we can read from the regression model, "new firms" does not have a significant linear relationship with regional inequality, as measured by "gini_n2," in the data set for the year 2010.
-The coefficient for "new firms" is small and not statistically significant, and the model explains very little of the variation in regional inequality.
+Similarly, for the Netherlands, a similar analysis was performed, and the results are consistent.
+There is also no significant linear relationship between the number of newly established companies and the Gini coefficient, with a p-value of 0.6316.
+The R-squared value is low (0.02663), indicating that only 2.663% of the variation in the Gini coefficient can be explained by the variation in the number of newly established companies.
+This suggests that in the Netherlands in 2010, the number of new firms does not have a significant impact on regional inequality.
 
 Furthermore, we will include the variable "population" as a control variable in the regression analysis to gain a better understanding of the relationship between the number of new start-up firms ("newfirms") and regional inequality ("gini_n2").
 This can help to explain any connections that may arise as a result of the size of the population in a region.
 
 ```{r}
-#| echo: FALSE
-regression_innovationp <- lm(gini_n2 ~ newfirms + population, data = merged_innovation)
-huxreg(regression_innovationp, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+# Making a regression model with the variables gini_n2, newfirms, and population
+regression_innovationp_es <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "ES"))
+regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "NL"))
+huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Overall, the results of the regression analysis do not provide strong support for the hypothesis that the number of new start-up firms has a significant impact on regional inequality in the data set for the year 2010.
-It is important to note that this is based on available data, and there may be other factors that plays a role in regional inequality, which is not included in the model.
+Spain (ES):
 
-Now we will create a new regression model to see if farms have an impact on regional inequality
+The regression analysis for Spain indicates a significant positive relationship between the number of newly established companies and regional inequality in 2010.
+For each increase in the number of new firms, regional inequality increases.
+At the same time, the analysis shows a negative relationship between population size and regional inequality.
+This means that areas with larger populations have lower regional inequality.
+The model for Spain is statistically significant and explains 27.35% of the variation in regional inequality.
+
+Netherlands (NL):
+
+The regression analysis for the Netherlands shows that neither the number of newly established companies nor population size has a significant impact on regional inequality in 2010.
+This means that the variation in these factors does not explain the variation in regional inequality in the Netherlands.
+The model for the Netherlands is not statistically significant, and it has very low explanatory power, with only 1.621% of the variation in regional inequality explained.
+
+Now we will create a new regression model to see if farms have an impact on regional inequality.
+Here we will include Greece again.
 
 ```{r}
 #| echo: FALSE
-merged_farm <- left_join(merged_innovation, farm, join_by(year, id_nuts2))
+merged_farm <- left_join(SN2010, farm, join_by(year, id_nuts2))
 ```
 
 ```{r}
 #| echo: FALSE
-regression_farm <- lm(gini_n2 ~ Area, data = merged_farm)
-huxreg(regression_farm, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+regression_farm_es <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "ES"))
+regression_farm_nl <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "NL"))
+regression_farm_el <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "EL"))
+huxreg(regression_farm_es, regression_farm_nl, regression_farm_el, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Comment to the regression modell: In summary, the results from this model can be interpreted as that changes in the regions' area do not have a significant linear relationship with regional inequality.
-The model does not provide a good explanation for the variation in "gini_n2" based on area alone.
-Although there is a positive coefficient (2.457e-09), the change in regional inequality caused by changes in area is so minimal that it is not significant enough to say that there is a linear relationship.
+Spain (ES):
 
-Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the two countries.
+For Spain, the results indicate a moderate positive relationship between agricultural area ("farm") and regional inequality (Gini coefficient).
+The p-value is 0.0309, which is lower than the typical significance level of 0.05, suggesting that agricultural area may have a significant impact on regional inequality.
+The adjusted R-squared is 0.2014, meaning that 20.14% of the variation in the Gini coefficient can be explained by the variation in agricultural area.
+
+Netherlands (NL):
+
+For the Netherlands, the results show no significant relationship between agricultural area and regional inequality.
+The p-value is 0.532, which is higher than the usual significance level, indicating that agricultural area does not have a significant impact on regional inequality.
+The adjusted R-squared is -0.06125, suggesting that agricultural area does not provide a good fit to the data.
+
+Greece (EL):
+
+For Greece, the results also indicate no significant relationship between agricultural area and regional inequality.
+The p-value is 0.283, which is higher than the usual significance level, suggesting that agricultural area does not have a significant impact on regional inequality.
+The adjusted R-squared is 0.2712, meaning that 27.12% of the variation in the Gini coefficient can be explained by the variation in agricultural area.
+
+Finally, we want to include the variable KM from the highway data set to see if this can have an impact on regional inequalities in the three countries.
+There is also missing values from Greece in this dataset so the regression will only be for Spain and Netherlands.
 
 ```{r}
 #| echo: FALSE
@@ -717,18 +743,26 @@ merged_highway <- left_join(merged_farm, highway, join_by(year, id_nuts2))
 
 ```{r}
 #| echo: FALSE
-regression_highway <- lm(gini_n2 ~ KM, data = merged_highway)
-huxreg(regression_highway, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+regression_highway_es <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "ES"))
+regression_highway_nl <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "NL"))
+huxreg(regression_highway_es, regression_highway_nl, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Comment to the regression modell: We see that the coefficient is estimated at 3.448e-06.
-Again, this is a very small value.
-This small coefficient suggests that the increase in the length of highways in the regions has a very small influence on the change in the "gini_n2" value.
-In addition, the p-value for "KM" is 0.73, which is higher than the usual significance level (for example, 0.05 ).
-This indicates that the coefficient for "KM" is not significant and there is no evidence of a linear relationship between the length of highways and regional inequality (gini level) in 2010.
+Spain (ES):
+
+For Spain, the results suggest a moderate positive relationship between the length of highways (in units of 100,000 kilometers) and regional inequality (Gini coefficient).
+The p-value is 0.0386, which is less than the typical significance level of 0.05, indicating that highway length may have a significant impact on regional inequality.
+The adjusted R-squared is 0.08889, implying that approximately 8.89% of the variation in the Gini coefficient can be explained by the variation in highway length.
+
+Netherlands (NL):
+
+In contrast, for the Netherlands, the results show no significant relationship between highway length (in units of 100,000 kilometers) and regional inequality.
+The p-value is 0.9213, which is higher than the usual significance level, suggesting that highway length does not have a significant impact on regional inequality.
+The adjusted R-squared is -0.04947, indicating that highway length is not a good fit for the data.
 
 **3.Model Interpretation:**
 
+<<<<<<< HEAD
 Based on the results from our three regression models for "New Firms," "Farm," and "Highway," it appears that none of these variables have a significant linear relationship with regional inequality (gini levels) in Spain and the Netherlands in 2010.
 This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
 This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
@@ -737,3 +771,31 @@ Further research and the inclusion of additional relevant variables can contribu
 ```{r}
 rm(data, data_el, data_es, data_nl, farm, highway, innovation, main_data2, merged_data, merged_innovation,model_summaries,NO_GDP, NO_merged, subset_data, subset_data_el)
 ```
+=======
+In summary, the regression analyses for Spain, the Netherlands, and Greece have revealed varying relationships between certain factors and regional inequality.
+
+Spain (ES):
+
+The analysis found that the number of newly established companies ("newfirms") had no significant impact on regional inequality initially.
+However, when population size was introduced as a control variable, a positive relationship emerged.
+Larger populations were associated with lower regional inequality.
+Additionally, the study identified a positive connection between the agricultural area ("farm") and regional inequality.
+Lastly, the length of highways ("KM") was found to have a moderate positive relationship with regional inequality in Spain.
+
+Netherlands (NL):
+
+Similar to Spain, the Netherlands showed no significant relationship between newly established companies and regional inequality.
+The inclusion of population as a control variable did not alter this result.
+Moreover, neither agricultural area ("farm") nor highway length exhibited significant impacts on regional inequality in the Netherlands.
+
+Greece (EL):
+
+Unfortunately, due to missing data, the analysis for Greece provided limited insights.
+It was not possible to determine the relationship between newly established companies, agricultural area ("farm"), or highway length and regional inequality in Greece.
+
+These findings emphasize the diversity of factors influencing regional inequality in different countries.
+While Spain exhibited significant associations between population, agricultural area, highway length, and regional inequality, the Netherlands did not show significant relationships with the selected variables.
+Further investigations and data completeness are required for a comprehensive understanding of regional inequality dynamics in Greece.
+
+## References
+>>>>>>> 4582ec2fc9d335c3c1e3f51d535db10ed71b33c0
