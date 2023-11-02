@@ -733,3 +733,7 @@ Based on the results from our three regression models for "New Firms," "Farm," a
 This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
 This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
 Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
+
+```{r}
+rm(data, data_el, data_es, data_nl, farm, highway, innovation, main_data2, merged_data, merged_innovation,model_summaries,NO_GDP, NO_merged, subset_data, subset_data_el)
+```
