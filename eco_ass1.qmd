@@ -818,4 +818,254 @@ These findings emphasize the diversity of factors influencing regional inequalit
 While Spain exhibited significant associations between population, agricultural area, highway length, and regional inequality, the Netherlands did not show significant relationships with the selected variables.
 Further investigations and data completeness are required for a comprehensive understanding of regional inequality dynamics in Greece.
 
+# Assignment 3: Alternative Functional Forms and Panel Estimates
+
+### Part A: Testing Development Effects Across Subsets
+
+#### 1.Subset Analysis:
+
+#### 2.Subset Analysis Discussion:
+
+### Part B: Exploring alternative Functional forms
+
+#### 1.Functional Form Exploration /2.Estimation and Visualization
+
+Spredningsplott???
+
+```{r}
+#| echo: FALSE
+#Making a correlation matrices for Spania
+cor_matrix_spain <- cor(subset_data_es[, c("gini_n2", "GDP_per_capita")])
+
+# Making a correlation matrices for Nederland
+cor_matrix_netherlands <- cor(subset_data_nl[, c("gini_n2", "GDP_per_capita")])
+
+#Making a correlation matrices for Hellas
+cor_matrix_greece <- cor(subset_data_el[, c("gini_n2", "GDP_per_capita")])
+```
+
+Looking at the correlation between the Gini coefficient (gini_n2) and gross domestic product per capita (GDP per capita) in each of the countries (Spain, the Netherlands, and Greece) provides valuable insight into the relationship between economic inequality and economic prosperity in these regions.
+In short, the analysis of the correlation provides valuable insights that can guide decision-makers, politicians and organizations in the design of targeted measures to deal with economic inequality.
+
+```{r}
+#| echo: FALSE
+print("Correlation matrices for Spania")
+print(cor_matrix_spain)
+
+print("Correlation matrices for the Netherlands")
+print(cor_matrix_netherlands)
+
+print("Correlation matrices for Greece")
+print(cor_matrix_greece)
+```
+
+Spain:
+
+The correlation between the Gini coefficient (gini_n2) and GDP per capita is -0.2505.
+This correlation is negative, suggesting a weak negative relationship between income inequality (measured by the Gini coefficient) and GDP per capita in Spain.
+In other words, as income inequality increases, GDP per capita may potentially decrease, although the correlation is weak.
+
+Netherlands:
+
+The correlation between the Gini coefficient (gini_n2) and GDP per capita is -0.5774.
+This correlation is also negative, and in this case, it is relatively strong.
+It indicates a significant negative relationship between income inequality and GDP per capita in the Netherlands.
+As income inequality increases, GDP per capita is expected to decrease.
+
+Greece:
+
+The correlation between the Gini coefficient (gini_n2) and GDP per capita in Greece is 0.6859.
+This correlation is positive, and it is quite strong.
+It suggests a significant positive relationship between income inequality and GDP per capita in Greece.
+As income inequality increases, GDP per capita is expected to increase.
+
+Further in the assignment, we will choose alternative functional forms (logarithmic, quadratic, cubic).
+
+A logarithmic form may be appropriate to model the relationship between income inequality (gini_n2) and gross domestic product per capita (GDP_per_capita) in Spain and the Netherlands.
+This is because the correlations are very weak and negative.
+A logarithmic form can help capture a potential non-linear relationship that may be hidden in the data.
+
+A cubic form may be relevant to model the relationship in Greece, where the correlation is positive and relatively strong.
+This may suggest a crooked relationship where an increase in income inequality can lead to a significant increase in gross domestic product per inhabitant, but there may be an upper limit to this increase.
+
+Logarithmic form:
+
+```{r}
+#| echo: FALSE
+# Convert the data to the logarithm for Spain
+subset_data_es$log_gini_n2 <- log(subset_data_es$gini_n2)
+subset_data_es$log_GDP_per_capita <- log(subset_data_es$GDP_per_capita)
+
+# Convert the data to the logarithm for the Netherlands
+subset_data_nl$log_gini_n2 <- log(subset_data_nl$gini_n2)
+subset_data_nl$log_GDP_per_capita <- log(subset_data_nl$GDP_per_capita)
+```
+
+```{r}
+#| echo: FALSE
+# Remove "-Inf" values from log_gini_n2 for Spain
+subset_data_es <- subset_data_es[!is.infinite(subset_data_es$log_gini_n2), ]
+
+# Remove "-Inf" values from log_gini_n2 for the Netherlands
+subset_data_nl <- subset_data_nl[!is.infinite(subset_data_nl$log_gini_n2), ]
+```
+
+```{r}
+#| echo: FALSE
+# Fit linear regression for Spain
+lm_model_spain <- lm(log_GDP_per_capita ~ log_gini_n2, data = subset_data_es)
+
+# Fit linear regression for the Netherlands
+lm_model_netherlands <- lm(log_GDP_per_capita ~ log_gini_n2, data = subset_data_nl)
+```
+
+```{r}
+#| echo: FALSE
+print("LM for Spania")
+print(lm_model_spain)
+
+print("LM for the Netherlands")
+print(lm_model_netherlands)
+```
+
+Result for Spain (LM for Spain):
+
+The regression model for Spain is given as: \`log_GDP_per_capita = 9.9493 - 0.0022 \* log_gini_n2\`.
+The coefficient for \`log_gini_n2\` is negative (-0.0022), suggesting that an increase in income inequality is associated with a decrease in GDP per capita in Spain.
+
+Result for the Netherlands (LM for the Netherlands):
+
+The regression model for the Netherlands is given as: \`log_GDP_per_capita = 9.8536 - 0.1485 \* log_gini_n2\`.
+The coefficient for \`log_gini_n2\` is also negative (-0.1485), indicating that an increase in income inequality is linked to a decrease in GDP per capita in the Netherlands.
+
+```{r}
+#| echo: FALSE
+# Regression coefficients for Spain
+a_spain <- coef(lm_model_spain)["log_gini_n2"]
+b_spain <- coef(lm_model_spain)["(Intercept)"]
+
+# Regression coefficients for the Netherlands
+a_netherlands <- coef(lm_model_netherlands)["log_gini_n2"]
+b_netherlands <- coef(lm_model_netherlands)["(Intercept)"]
+```
+
+```{r}
+#| echo: FALSE
+# Print regression coefficients for Spain
+print("Regresjonskoeffisienter for Spani")
+print(paste("a_spain:", a_spain))
+print(paste("b_spain:", b_spain))
+
+# Print regression coefficients for the Netherlands
+print("Regresjonskoeffisienter for Nederland")
+print(paste("a_netherlands:", a_netherlands))
+print(paste("b_netherlands:", b_netherlands))
+
+```
+
+For Spain:
+
+The coefficient \`a_spain\` is approximately -0.0022.
+This represents the change in the logarithm of GDP per capita for each unit increase in the logarithm of income inequality.
+With a negative coefficient, this indicates a negative relationship, meaning that an increase in income inequality is associated with a decrease in GDP per capita.The coefficient \`b_spain\` is approximately 9.9493.
+This is the intercept value and represents the expected logarithm of GDP per capita when the logarithm of income inequality is 0.
+
+For the Netherlands:
+
+The coefficient \`a_netherlands\` is approximately -0.1485.
+This also represents the change in the logarithm of GDP per capita for each unit increase in the logarithm of income inequality.
+Similar to Spain, this negative coefficient indicates a negative relationship, meaning that an increase in income inequality is associated with a decrease in GDP per capita.
+
+The coefficient \`b_netherlands\` is approximately 9.8536.
+This is the intercept value and represents the expected logarithm of GDP per capita when the logarithm of income inequality is 0.
+
+In summary, the results indicate a negative relationship between income inequality (measured by \`log_gini_n2\`) and GDP per capita (measured by \`log_GDP_per_capita\`) in both Spain and the Netherlands.
+This means that in both countries, as income inequality increases (higher values of \`log_gini_n2\`), a decrease in GDP per capita (lower values of \`log_GDP_per_capita\`) is expected.
+The coefficients also provide insight into the strength of this relationship, as the size of the coefficient indicates the degree of change in the response variable for each unit change in the independent variable.
+
+Cubic shape:
+
+```{r}
+#| echo: FALSE
+# Create logarithmically transformed columns for Greece
+subset_data_el$log_gini_n2 <- log(subset_data_el$gini_n2)
+subset_data_el$log_GDP_per_capita <- log(subset_data_el$GDP_per_capita)
+```
+
+```{r}
+#| echo: FALSE
+# Fit cubic regression for Greece
+lm_model_greece_cubic <- lm(log_GDP_per_capita ~ log_gini_n2 + I(log_gini_n2^2) + I(log_gini_n2^3), data = subset_data_el)
+```
+
+```{r}
+#| echo: FALSE
+print(lm_model_greece_cubic)
+```
+
+Intercept (Constant): The intercept value is approximately 16.2524.
+It represents the expected logarithm of GDP per capita when the logarithm of income inequality (\`log_gini_n2\`) and its squared and cubic values are all zero.
+
+log_gini_n2 (Linear Coefficient):The coefficient for \`log_gini_n2\` is approximately 5.3217.
+This represents the change in the logarithm of GDP per capita for each unit increase in the logarithm of income inequality.
+A positive coefficient indicates a positive relationship.
+
+I(log_gini_n2\^2) (Quadratic Coefficient): The coefficient for the square of \`log_gini_n2\` is approximately 1.4039.
+It represents the change in the logarithm of GDP per capita for each unit increase in the square of the logarithm of income inequality.
+This coefficient provides information about the shape of the cubic relationship.
+
+I(log_gini_n2\^3) (Cubic Coefficient):The coefficient for the cube of \`log_gini_n2\` is approximately 0.1208.
+It represents the change in the logarithm of GDP per capita for each unit increase in the cube of the logarithm of income inequality.
+This coefficient further informs about the shape of the cubic relationship.
+
+Overall, these coefficients indicate a complex cubic relationship between income inequality and GDP per capita in Greece.
+They provide insights into the direction and strength of the relationship, as well as how this relationship changes with different powers of income inequality.
+
+```{r}
+#| echo: FALSE
+# Regression coefficients for Greece (cubic)
+coefficients_greece_cubic <- coef(lm_model_greece_cubic)
+```
+
+```{r}
+#| echo: FALSE
+# Display the coefficients for the cubic regression
+coefficients_greece_cubic
+```
+
+Intercept (Constant):The intercept value is approximately 16.2524.
+It represents the expected logarithm of GDP per capita when the logarithm of income inequality (\`log_gini_n2\`) and its squared and cubic values are all zero.
+
+log_gini_n2 (Linear Coefficient):The coefficient for \`log_gini_n2\` is approximately 5.3217.
+This represents the change in the logarithm of GDP per capita for each unit increase in the logarithm of income inequality.
+A positive coefficient indicates a positive relationship.
+
+I(log_gini_n2\^2) (Quadratic Coefficient):The coefficient for the square of \`log_gini_n2\` is approximately 1.4039.
+It represents the change in the logarithm of GDP per capita for each unit increase in the square of the logarithm of income inequality.
+This coefficient provides information about the shape of the cubic relationship.
+
+I(log_gini_n2\^3) (Cubic Coefficient):The coefficient for the cube of \`log_gini_n2\` is approximately 0.1208.
+It represents the change in the logarithm of GDP per capita for each unit increase in the cube of the logarithm of income inequality.
+This coefficient further informs about the shape of the cubic relationship.
+
+These coefficients describe the relationship between income inequality and GDP per capita in Greece within the context of a cubic function, with the intercept and various powers of \`log_gini_n2\` influencing the outcome.
+
+KNYTT OPP TIL OPPRINNELIG MODELL
+
+#### 3.Results Interpretation
+
+### Part C: Heteroskedasticity Testing and Causality Discussion
+
+#### 1.Heteroskedasticity Testing:
+
+#### 2.Causality Discussion:
+
+### Part D: Panel Estimates
+
+#### 1.Panel Estimation Task:
+
+#### 2.Panel Estimation Analysis:
+
+#### 3.Panel Estimation Discussion:
+
 ## References
