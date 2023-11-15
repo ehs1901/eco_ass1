@@ -1050,6 +1050,32 @@ This coefficient further informs about the shape of the cubic relationship.
 
 These coefficients describe the relationship between income inequality and GDP per capita in Greece within the context of a cubic function, with the intercept and various powers of \`log_gini_n2\` influencing the outcome.
 
+```{r}
+# Perform regression on the combined dataset
+regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
+```
+
+```{r}
+# Display regression results using huxreg
+huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+Comment to the regression model:
+
+The linear regression model for the relationship between GDP_per_capita/10000 and gini_n2 is statistically significant.
+The intercept, representing the estimated gini_n2 when GDP_per_capita/10000 is zero, is 0.103440.
+The coefficient for GDP_per_capita/10000 is -0.023270, indicating that for each unit increase in GDP_per_capita/10000, the estimated gini_n2 decreases by approximately 0.023270.
+
+Both the intercept and the coefficient are highly significant (indicated by \`\*\*\*\` in the output), suggesting a strong statistical relationship.
+The residual standard error is 0.05272, reflecting the variability of observed \`gini_n2\` values around the model's predictions.
+The model explains approximately 14.47% of the variability in gini_n2 as indicated by the Multiple R-squared.
+The Adjusted R-squared (0.1289) considers the model's complexity.
+
+The F-statistic tests the overall significance of the model, and its associated p-value (0.003824) is below the conventional significance level, indicating that the model is statistically significant as a whole.
+
+Our conclusion is that the linear regression model provides evidence of a statistically significant negative relationship between GDP_per_capita/10000 and gini_n2.
+However, it's important to note that the model explains a relatively modest proportion of the variability in gini_n2.
+
 KNYTT OPP TIL OPPRINNELIG MODELL
 
 #### 3.Results Interpretation
