@@ -3,7 +3,7 @@ title: "Assignments - econometrics"
 format: pdf
 editor: visual
 bibliography: references.bib
-author: emilie and ingrid
+author: Emilie and Ingrid
 ---
 
 ## Assignment 1: Data and Descriptive
@@ -31,6 +31,8 @@ library(magrittr)
 library(huxtable)
 library(broom)
 library(readr)
+library(lmtest)
+library(plm)
 ```
 
 ## Part A : Sub-national GDP and GDP per Capita
@@ -888,7 +890,7 @@ A logarithmic form can help capture a potential non-linear relationship that may
 A cubic form may be relevant to model the relationship in Greece, where the correlation is positive and relatively strong.
 This may suggest a crooked relationship where an increase in income inequality can lead to a significant increase in gross domestic product per inhabitant, but there may be an upper limit to this increase.
 
-Logarithmic form:
+**Logarithmic form:**
 
 ```{r}
 #| echo: FALSE
@@ -1050,17 +1052,27 @@ This coefficient further informs about the shape of the cubic relationship.
 
 These coefficients describe the relationship between income inequality and GDP per capita in Greece within the context of a cubic function, with the intercept and various powers of \`log_gini_n2\` influencing the outcome.
 
+#### 3.Results Interpretation
+
+**The original linear model:**
+
+As we have not previously created a combined regression model for all countries from 2010 in the task, we do so here, allowing us to compare it to the original linear model.
+
 ```{r}
+#| echo: FALSE
 # Perform regression on the combined dataset
 regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
 ```
 
 ```{r}
+#| echo: FALSE
+#| label: tbl-original_linear
+#| tbl-cap: "original linear model"
 # Display regression results using huxreg
 huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
 
-Comment to the regression model:
+Comment on the @tbl-original :
 
 The linear regression model for the relationship between GDP_per_capita/10000 and gini_n2 is statistically significant.
 The intercept, representing the estimated gini_n2 when GDP_per_capita/10000 is zero, is 0.103440.
@@ -1076,22 +1088,189 @@ The F-statistic tests the overall significance of the model, and its associated 
 Our conclusion is that the linear regression model provides evidence of a statistically significant negative relationship between GDP_per_capita/10000 and gini_n2.
 However, it's important to note that the model explains a relatively modest proportion of the variability in gini_n2.
 
-KNYTT OPP TIL OPPRINNELIG MODELL
+**Comparison/Summarizing**:
 
-#### 3.Results Interpretation
+Our analysis focused on regression models examining the relationship between income inequality and GDP per capita across several countries, including Spain, the Netherlands, Greece, Poland, and Slovenia.
+The objective was to evaluate and compare alternative models to the original linear model, aiming for a comprehensive understanding of economic relationships across diverse nations.
+
+In the original linear model, a negative correlation was observed between GDP per capita and income inequality, with a coefficient of -0.023270.
+This suggests that an increase in GDP per capita is expected to reduce income inequality.
+
+Alternative models included logarithmic transformations for Spain and the Netherlands, as well as a cubic model for Greece.
+Logarithmic models provide a percentage interpretation of coefficients, while cubic models offer a more complex representation of the relationship between income inequality and GDP per capita.
+
+Results from the logarithmic models for Spain and the Netherlands suggest a diminishing effect of GDP per capita on income inequality with economic growth.
+This could be interpreted as economic gains having a relatively greater impact on income inequality in low-income economies compared to high-income ones.
+
+In the cubic model for Greece, the cubic terms indicate a more intricate relationship, possibly suggesting critical points or curvatures in the relationship between income inequality and GDP per capita.
 
 ### Part C: Heteroskedasticity Testing and Causality Discussion
 
 #### 1.Heteroskedasticity Testing:
 
-#### 2.Causality Discussion:
+```{r}
+#| echo: FALSE
+# Få residualene fra modellen
+residuals_original <- resid(regression_model_all_countries)
+
+# Utfør Breusch-Pagan-testen
+hetero_test_original <- bptest(regression_model_all_countries)
+```
+
+```{r}
+#| echo: FALSE
+#| label: tbl-hetroOriginal
+#| tbl-cap: "Hetroskedasticity test for the original model"
+print(hetero_test_original)
+```
+
+Comment on the @tbl-hetroOriginal
+
+Statistical Significance (p-value):The p-value of 0.1816 is greater than common significance levels like 0.05.
+This suggests that we do not have sufficient evidence to reject the null hypothesis of homoskedasticity.
+In other words, there is no statistically significant evidence of heteroskedasticity in the original linear model for all countries based on the Breusch-Pagan test.
+
+Conclusion: Given these results, we cannot conclude that there is heteroskedasticity in the original linear model for all countries.
+The model appears to handle the variation in errors uniformly across all observations.
+
+If the p-value had been lower (typically below 0.05), it would have indicated evidence of heteroskedasticity.
+In such cases, a more appropriate model might include corrections, such as robust standard errors, to address potential heteroskedasticity.
+
+```{r}
+#| echo: FALSE
+# Få residualene fra den alternative modellen
+residuals_alternative_S <- resid(lm_model_spain)
+
+# Utfør Breusch-Pagan-testen
+hetero_test_spain <- bptest(lm_model_spain)
+```
+
+```{r}
+#| echo: FALSE
+# Få residualene fra den alternative modellen
+residuals_alternative_N <- resid(lm_model_netherlands)
+
+# Utfør Breusch-Pagan-testen
+hetero_test_netherlands <- bptest(lm_model_netherlands)
+```
+
+```{r}
+#| echo: FALSE
+# Få residualene fra den alternative modellen
+residuals_alternative_G <- resid(lm_model_greece_cubic)
+
+# Utfør Breusch-Pagan-testen
+hetero_test_greece <- bptest(lm_model_greece_cubic)
+```
+
+```{r}
+#| echo: FALSE
+#| label: tbl-hetroESG
+#| tbl-cap: "Hetroskedasticity test for Spaint, Nederlands and Greece"
+print(hetero_test_spain)
+print(hetero_test_netherlands)
+print(hetero_test_greece)
+```
+
+Comment on the @tbl-hetroESG
+
+Spain: The p-value of 0.6383 is larger than common significance levels (e.g., 0.05), suggesting that there is no significant evidence of heteroskedasticity in the model for Spain.
+The model appears to handle the variation in errors effectively, showing homoskedasticity.
+
+The Netherlands: Similar to the case of Spain, the p-value of 0.3173 is greater than conventional significance levels, indicating no significant evidence of heteroskedasticity in the model for the Netherlands.
+The model seems to account for error variance consistently across observations.
+
+Greece: For the cubic model in Greece, the p-value of 0.3461 is higher than common significance levels.
+This suggests that there is no significant evidence of heteroskedasticity in the cubic model for Greece.
+The model handles the variance in errors effectively.
+
+Based on the results of the Breusch-Pagan tests for both the original model and the alternative models, it seems that none of the models provide strong evidence of heteroskedasticity.
+The p-values are all relatively high, not providing sufficient grounds to reject the null hypothesis of homoskedasticity.
+
+#### 
+
+2.Causality Discussion:
+
+As we can observe, neither the original model nor the alternative models show strong evidence of heteroskedasticity.
+There are several strategies one can employ to induce evidence of heteroskedasticity in the models.
+To manipulate the error term by adding extreme values for specific observations or by introducing exponential growth can be strategies to generate heteroskedasticity in the models.
+
+Adding Extreme Values:
+
+By introducing extreme values to the error term for selected observations, you create variation in the error term that may manifest as heteroskedasticity.
+This can be achieved by identifying specific data points that experience a significant increase in the variance of the error term.
+
+Exponential Growth in the Error Term:
+
+Introducing exponential growth in the error term as a function of one or more independent variables will also lead to increasing variance.
+This can mimic situations where the uncertainty in observations grows exponentially with changes in the independent variables.
 
 ### Part D: Panel Estimates
 
 #### 1.Panel Estimation Task:
 
-#### 2.Panel Estimation Analysis:
+```{r}
+#| echo: FALSE
+# Korrigert datasett
+Panel_Data <- data_2010 %>%
+  distinct(year, geo, id_nuts0, id_nuts2, GDP_per_capita, population, gini_n2) %>%
+  mutate(GDP_per_capita = GDP_per_capita) %>%
+  mutate(gini_nuts3 = gini_n2 * 100000) %>%
+  select(year, geo, id_nuts0, id_nuts2, population, GDP_per_capita, gini_n2, gini_nuts3)
 
-#### 3.Panel Estimation Discussion:
+```
+
+```{r}
+#| echo: FALSE
+# Modell 1: Estimer effekten på NUTS-nivå med flere indekser
+plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "geo"), model = "within") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+
+```
+
+```{r}
+#| echo: FALSE
+# Modell 2: Estimer effekten på Year-nivå
+plm2 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year"), model = "within", effect = "individual") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+```
+
+```{r}
+#| echo: FALSE
+# Modell 3: Estimer effekten på NUTS2-nivå
+plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"), model = "within") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+```
+
+```{r}
+#| echo: FALSE
+#| label: tbl-six
+#| tbl-cap: "panel estimation"
+# Anta at du har plm-modeller definert som plm1, plm2, plm3, plm4
+# Erstatt disse med dine faktiske plm-modeller
+
+huxreg(
+  list(
+    "Fixed effect Country" = plm1,
+    "Fixed effect Year" = plm2,
+    "Fixed effect NUTS2" = plm3
+  ),
+  statistics = c(N = "nobs", R2 = "r.squared", FStat = "statistic", PValue = "p.value"),
+  stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+  note = "Note): {stars} T statistics in brackets."
+)
+```
+
+comment on @tbl-six
+
+In the fixed-effects model, the variables country, year, and NUTS2 are considered fixed and not random or mixed.
+From the results presented in our table (similar to \@tbl-25), we observe that we have 56 observations for each fixed effect.
+None of the correlations among the fixed effects are notably high, indicating that they do not explain a substantial proportion of the variation in the dependent variable attributable to the independent variable.
+
+The only fixed effect that appears to exhibit some level of correlation is the fixed effect associated with the variable "year." This fixed effect has an R-squared value of 0.145, suggesting that approximately 14.5% of the variation in the dependent variable is explained by the fixed effect on the variable "year." The p-value associated with this correlation is less than 0.01, indicating that the correlation is statistically significant.
+
+In summary, the fixed-effects model reveals that the fixed effects for country and NUTS2 do not show notable correlations with the dependent variable.
+However, the fixed effect on the variable "year" demonstrates a statistically significant correlation, explaining a moderate but meaningful proportion of the variation in the dependent variable.
+Again, I apologize for any confusion, and thank you for bringing it to my attention.
 
 ## References
