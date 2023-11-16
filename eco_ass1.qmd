@@ -824,15 +824,11 @@ Further investigations and data completeness are required for a comprehensive un
 
 ### Part A: Testing Development Effects Across Subsets
 
-#### 1.Subset Analysis:
-
-#### 2.Subset Analysis Discussion:
+This was done during assignment 2.
 
 ### Part B: Exploring alternative Functional forms
 
 #### 1.Functional Form Exploration /2.Estimation and Visualization
-
-Spredningsplott???
 
 ```{r}
 #| echo: FALSE
