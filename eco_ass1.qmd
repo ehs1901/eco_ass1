@@ -1208,18 +1208,19 @@ This can mimic situations where the uncertainty in observations grows exponentia
 ```{r}
 #| echo: FALSE
 # Corrected dataset
-Panel_Data <- data_2010 %>%
+Panel_Data <- main_data2 %>%
   distinct(year, geo, id_nuts0, id_nuts2, GDP_per_capita, population, gini_n2) %>%
   mutate(GDP_per_capita = GDP_per_capita) %>%
   mutate(gini_nuts3 = gini_n2 * 100000) %>%
-  select(year, geo, id_nuts0, id_nuts2, population, GDP_per_capita, gini_n2, gini_nuts3)
+  select(year, geo, id_nuts0, id_nuts2, population, GDP_per_capita, gini_n2, gini_nuts3) %>%
+  pdata.frame(index = c("id_nuts2","year"))
 
 ```
 
 ```{r}
 #| echo: FALSE
-# Model 1: Estimate the effect at NUTS level with several indices
-plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "geo"), model = "within") %>% 
+# Model 1: Estimate the effect at Geo level with several indices
+plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "id_nuts2"), model = "within") %>% 
   coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 
 ```
@@ -1240,6 +1241,18 @@ plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"
 
 ```{r}
 #| echo: FALSE
+# Modell 4: Estimer effekten på kombinert Geo, Year, NUTS2-nivå
+plm4 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "year", "id_nuts0"), model = "within", effect = "twoways") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+
+#| echo: FALSE
+# Modell 5: Estimer effekten på kombinert Geo, Year, NUTS2-nivå
+plm5 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "year"), model = "within", effect = "twoways") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+```
+
+```{r}
+#| echo: FALSE
 #| label: tbl-six
 #| tbl-cap: "panel estimation"
 # Assume you have plm models defined as plm1, plm2, plm3, plm4
@@ -1248,7 +1261,9 @@ huxreg(
   list(
     "Fixed effect Country" = plm1,
     "Fixed effect Year" = plm2,
-    "Fixed effect NUTS2" = plm3
+    "Fixed effect NUTS2" = plm3,
+    "Fixed effect NUTS2,year" = plm4,
+    "Fixed effect NUTS2,year" = plm5
   ),
   statistics = c(N = "nobs", R2 = "r.squared", FStat = "statistic", PValue = "p.value"),
   stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
