@@ -1110,10 +1110,10 @@ In the cubic model for Greece, the cubic terms indicate a more intricate relatio
 
 ```{r}
 #| echo: FALSE
-# Få residualene fra modellen
+#Getting the residual from models
 residuals_original <- resid(regression_model_all_countries)
 
-# Utfør Breusch-Pagan-testen
+#Performing the Breusch-Pagan test
 hetero_test_original <- bptest(regression_model_all_countries)
 ```
 
@@ -1138,28 +1138,28 @@ In such cases, a more appropriate model might include corrections, such as robus
 
 ```{r}
 #| echo: FALSE
-# Få residualene fra den alternative modellen
+#Getting the residuals from the alternative model
 residuals_alternative_S <- resid(lm_model_spain)
 
-# Utfør Breusch-Pagan-testen
+#Performing the Breusch-Pagan test
 hetero_test_spain <- bptest(lm_model_spain)
 ```
 
 ```{r}
 #| echo: FALSE
-# Få residualene fra den alternative modellen
+#Getting the residuals from the alternative model
 residuals_alternative_N <- resid(lm_model_netherlands)
 
-# Utfør Breusch-Pagan-testen
+#Performing the Breusch-Pagan test
 hetero_test_netherlands <- bptest(lm_model_netherlands)
 ```
 
 ```{r}
 #| echo: FALSE
-# Få residualene fra den alternative modellen
+#Getting the residuals from the alternative model
 residuals_alternative_G <- resid(lm_model_greece_cubic)
 
-# Utfør Breusch-Pagan-testen
+#Performing the Breusch-Pagan test
 hetero_test_greece <- bptest(lm_model_greece_cubic)
 ```
 
@@ -1211,7 +1211,7 @@ This can mimic situations where the uncertainty in observations grows exponentia
 
 ```{r}
 #| echo: FALSE
-# Korrigert datasett
+# Corrected dataset
 Panel_Data <- data_2010 %>%
   distinct(year, geo, id_nuts0, id_nuts2, GDP_per_capita, population, gini_n2) %>%
   mutate(GDP_per_capita = GDP_per_capita) %>%
@@ -1222,7 +1222,7 @@ Panel_Data <- data_2010 %>%
 
 ```{r}
 #| echo: FALSE
-# Modell 1: Estimer effekten på NUTS-nivå med flere indekser
+# Model 1: Estimate the effect at NUTS level with several indices
 plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "geo"), model = "within") %>% 
   coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 
@@ -1230,14 +1230,14 @@ plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "g
 
 ```{r}
 #| echo: FALSE
-# Modell 2: Estimer effekten på Year-nivå
+# Model 2: Estimate the effect at Year level
 plm2 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year"), model = "within", effect = "individual") %>% 
   coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 ```
 
 ```{r}
 #| echo: FALSE
-# Modell 3: Estimer effekten på NUTS2-nivå
+# Model 3: Estimate the effect at NUTS2 level
 plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"), model = "within") %>% 
   coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 ```
@@ -1246,8 +1246,7 @@ plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"
 #| echo: FALSE
 #| label: tbl-six
 #| tbl-cap: "panel estimation"
-# Anta at du har plm-modeller definert som plm1, plm2, plm3, plm4
-# Erstatt disse med dine faktiske plm-modeller
+# Assume you have plm models defined as plm1, plm2, plm3, plm4
 
 huxreg(
   list(
