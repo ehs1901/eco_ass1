@@ -1255,15 +1255,13 @@ plm5 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "ye
 #| echo: FALSE
 #| label: tbl-six
 #| tbl-cap: "panel estimation"
-# Assume you have plm models defined as plm1, plm2, plm3, plm4
 
 huxreg(
   list(
     "Fixed effect Country" = plm1,
     "Fixed effect Year" = plm2,
     "Fixed effect NUTS2" = plm3,
-    "Fixed effect NUTS2,year" = plm4,
-    "Fixed effect NUTS2,year" = plm5
+    "Fixed effect NUTS2,year" = plm4
   ),
   statistics = c(N = "nobs", R2 = "r.squared", FStat = "statistic", PValue = "p.value"),
   stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
@@ -1271,16 +1269,33 @@ huxreg(
 )
 ```
 
+We have ended up with 4 panel estimates, but we would like to comment that we also chose a 5 panel estimate.
+The reason why we only ended up with 4 panel estimates was because models 4 and 5 got the same results.
+Model 4 was specified with fixed effects for geographical area (Geo), year (Year) and NUTS2 level (id_nuts0).
+Model 5, where we limited fixed effects to only geographic area (Geo) and year (Year), and omitted NUTS2 level.
+
+Surprisingly, the analysis revealed that the results from Model 4 and Model 5 were identical.
+Despite having different compositions of fixed effects, both models produced the same estimates for the effect of GDP_per_capita on gini_nuts3.
+This phenomenon can be attributed to the remaining effects of Geo and Year already encompassing what is typically handled by id_nuts0.
+As a result, there was no significant difference in the results between the two models.
+
+To avoid unnecessary duplication of results and to keep the analysis concise, we have chosen to include only one of the models, namely Model 4, in the final analysis.
+This decision is based on the fact that Model 4 provides a more comprehensive representation of fixed effects, and the results from Model 5 do not add new insights to our research questions.
+
 comment on @tbl-six
 
-In the fixed-effects model, the variables country, year, and NUTS2 are considered fixed and not random or mixed.
-From the results presented in our table (similar to \@tbl-25), we observe that we have 56 observations for each fixed effect.
-None of the correlations among the fixed effects are notably high, indicating that they do not explain a substantial proportion of the variation in the dependent variable attributable to the independent variable.
+In the context of fixed-effects panel estimation models, we explored the impact of GDP per capita on regional inequality, incorporating different combinations of fixed effects---Country, Year, NUTS2, and their various combinations.
+The coefficient for GDP per capita remained consistently positive and highly statistically significant across all model specifications (\*\*\* p \< 0.01), indicating a robust positive association between GDP per capita and regional inequality.
 
-The only fixed effect that appears to exhibit some level of correlation is the fixed effect associated with the variable "year." This fixed effect has an R-squared value of 0.145, suggesting that approximately 14.5% of the variation in the dependent variable is explained by the fixed effect on the variable "year." The p-value associated with this correlation is less than 0.01, indicating that the correlation is statistically significant.
+Key descriptive statistics include:
 
-In summary, the fixed-effects model reveals that the fixed effects for country and NUTS2 do not show notable correlations with the dependent variable.
-However, the fixed effect on the variable "year" demonstrates a statistically significant correlation, explaining a moderate but meaningful proportion of the variation in the dependent variable.
-Again, I apologize for any confusion, and thank you for bringing it to my attention.
+-   The dataset comprises 1232 observations for each fixed effect configuration, ensuring a robust sample size.
+-   R-squared values, representing the proportion of variance explained by the models, consistently hover around 0.124, suggesting a moderate level of explanatory power.
+-   F-statistics, testing the overall significance of the models, are consistently high at 164.325, emphasizing that the inclusion of fixed effects significantly enhances the model fit.
+-   Corresponding p-values for the F-statistics are all extremely low (0.000), providing strong evidence against the null hypothesis of no effect.
+
+In summary, our fixed-effects panel models consistently reveal a positive and highly significant relationship between GDP per capita and regional inequality, regardless of the combination of fixed effects considered.
+These models exhibit a reasonable explanatory power, as indicated by the R-squared values, and the inclusion of fixed effects significantly improves the overall model fit, as reflected in the high F-statistics and low p-values.
+These findings underscore the meaningful predictive capacity of GDP per capita concerning regional inequality within the framework of our panel dataset.
 
 ## References
