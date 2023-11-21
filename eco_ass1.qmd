@@ -54,10 +54,12 @@ Obs_Value: this variable shows us the value of GDP.
 @zotero-126
 
 ```{r}
+#| echo: FALSE
 GDP <- read_csv("GDP.csv", show_col_types = FALSE)
 ```
 
 ```{r}
+#| echo: FALSE
 #In order to obtain accurate GDP figures, we had to select 'MIO_EUR' as the unit, as it represents the GDP values.
 NO_GDP <- GDP |> 
   filter(str_sub(geo,1,2) == "NO") |> 
@@ -65,6 +67,7 @@ NO_GDP <- GDP |>
 ```
 
 ```{r}
+#| echo: FALSE
 dim(GDP)
 ```
 
@@ -101,6 +104,7 @@ population <- read_csv("population.csv", show_col_types = FALSE)
 We will do the same as on the previous data set by selecting the necessary variables:
 
 ```{r}
+#| echo: FALSE
 # We rename one of the variables and select the ones we want
 population <- population |> 
   select(year = TIME_PERIOD, geo, population = OBS_VALUE)
@@ -110,6 +114,7 @@ Find unique geo codes in population.
 Use these to reduce GDP.
 
 ```{r}
+#| echo: FALSE
 nuts_pop <- population |> 
   select(geo) |> 
   distinct() |> 
@@ -117,6 +122,7 @@ nuts_pop <- population |>
 ```
 
 ```{r}
+#| echo: FALSE
 nuts_gdp <- GDP |> 
   select(geo) |> 
   distinct() |> 
@@ -132,6 +138,7 @@ nuts_inpop_notinGDP <- setdiff(nuts_pop, nuts_gdp)
 Reduces GDP to same zones as in population.
 
 ```{r}
+#| echo: FALSE
 #filters so that only the units "MIO_EUR" are included in the data set
 GDP <- GDP |>
   filter(geo %in% nuts_pop) |> 
@@ -145,6 +152,7 @@ Now we will calculate GDP per capita for each subregion.
 The first thing we need to do is combine the two datasets into one:
 
 ```{r}
+#| echo: FALSE
 merged_data <- left_join(population, GDP, join_by(year, geo)) |> 
     filter(!geo %in% nuts_inpop_notinGDP)
 ```
@@ -241,6 +249,7 @@ First we use the "merge" function to create three new columns in "merged_data" b
 This can be useful for creating categories based on different levels of NUTS geographic regions (NUTS3, NUTS2, and NUTS0) based on the first characters of "geo":
 
 ```{r}
+#| echo: FALSE
 merged_data_temp <- merged_data %>%
   mutate(id_nuts3 = geo, 
          id_nuts2 = substr(geo, 1, 4),
