@@ -1253,11 +1253,6 @@ plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"
 # Modell 4: Estimer effekten på kombinert Geo, Year, NUTS2-nivå
 plm4 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "year", "id_nuts0"), model = "within", effect = "twoways") %>% 
   coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
-
-#| echo: FALSE
-# Modell 5: Estimer effekten på kombinert Geo, Year, NUTS2-nivå
-plm5 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "year"), model = "within", effect = "twoways") %>% 
-  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 ```
 
 ```{r}
@@ -1277,6 +1272,8 @@ huxreg(
   note = "Note): {stars} T statistics in brackets."
 )
 ```
+
+#### 2. Panel Estimation Analysis and Discussion 
 
 We have ended up with 4 panel estimates, but we would like to comment that we also chose a 5 panel estimate.
 The reason why we only ended up with 4 panel estimates was because models 4 and 5 got the same results.
