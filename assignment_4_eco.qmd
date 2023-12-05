@@ -49,7 +49,9 @@ The data is from 2000-2020.
 Once we incorporate these two datasets into our RStudio project, we proceed to calculate GDP per capita at the NUTS 3 level for the individual countries.
 This calculation is achieved by dividing GDP by the population figure, and it can be expressed using the following formula:
 
-![](images/formel.png){fig-align="center"}
+$$
+y_i=GDP_i/population_i
+$$
 
 In @tbl-one we see the mean, variance, max.
 and min. values in GDP per capita for each of the countries.
@@ -353,49 +355,6 @@ The disparities revealed in our data align with the prevailing governance polici
 It becomes apparent that the nuanced relationship between development and regional inequality requires careful consideration of policy frameworks.
 While development can be a driving force for economic progress, our findings emphasize the importance of inclusive policies that address disparities and ensure equitable distribution of resources.
 In many instances, the observed negative effect on regional inequality calls for a strategic reevaluation of development strategies to foster balanced and sustainable growth across all regions.
-
-The first we did was that we found values in GDP per capita for each of our countries and we also look at gini coefficients in the countries over time.
-
-Reading of @tbl-one Albania exhibits a relatively modest mean GDP, with considerable variance.
-The maximum and minimum GDP values suggest a range reflecting the economic diversity within the country.
-Greece demonstrates a higher mean GDP compared to Albania, but the substantial variance indicates notable economic disparities.
-The range from minimum to maximum GDP underscores the economic heterogeneity.
-Spain exhibits a higher mean GDP, indicating a more robust economic performance.
-However, the variance suggests variations in economic output across different regions or time periods.
-Ireland stands out with a significantly higher mean GDP, but the considerable variance and a wide range between maximum and minimum GDP values indicate potential economic volatility.
-The Netherlands shows a robust mean GDP, and while there is variance, the range between maximum and minimum GDP is relatively moderate.
-Norway boasts the highest mean GDP in the dataset.
-The variance and range suggest a stable but comparatively concentrated economic landscape.
-Poland's mean GDP is lower, and there is considerable variance, reflecting economic diversity.
-The range between maximum and minimum GDP values underscores the disparities within the country.
-Slovenia shows a moderate mean GDP, with variance indicating economic variations.
-The range between maximum and minimum GDP values highlights regional economic differences.
-
-It may be good to note that Ireland (IE) and Norway (NO) have the highest mean, while Albania (AL) and Poland (PO) have the lowest.
-We also see an extremely high range between min. and max.
-values in Ireland (IE).
-
-Furthermore, we will look at gini coefficients in our countries.
-The Gini coefficients help us assess the economic inequality of a population or the distribution of income and wealth among the members of that population.The Gini coefficient is usually a value between 0 and 1, where 0 indicates complete equality (everyone has the same income or wealth), and 1 indicates complete inequality (one person has all the income or wealth, while everyone else has none).
-**\@zotero-120KIDLE**
-
-In @tbl-two, all eight countries are included, but we chose to focus only on Spain and Poland, NUTS 2, as you can see in @tbl-three.
-This is because these countries have the most observations, and therefore give a more realistic picture of the countries.
-Ireland, for example, deals with 3 regions where one region has quite a lot of development, but this gives us little insight into what the rest of the country's values are like.
-
-What both Spain and Poland have in common is that there is a big jump in the Gini value between the lowest and the highest region.
-There are three of the regions in Poland that stand out a little as they have no data observations from 2000 to 2009 and 2014.
-
-The observed disparities in income inequality across regions in the assigned countries emphasize the necessity for targeted interventions at the regional level.
-Addressing and mitigating income distribution disparities requires customized approaches, recognizing that a uniform economic policy may not be universally effective.
-The variations in Gini coefficients signify distinct factors influencing income inequality in different regions.
-Policymakers are confronted with the challenge of prioritizing these regional differences in the formulation, implementation, and evaluation of economic and social policies.
-Recognizing the unique economic circumstances of each region is imperative for designing policies aimed at reducing income inequality and fostering a more inclusive and equitable economic environment.
-Tailored, region-specific strategies enhance the effectiveness of such policies by aligning them with the specific needs and realities of individual regions.
-
-### 
-
-### 
 
 ## Appendix
 
