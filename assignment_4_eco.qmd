@@ -37,13 +37,14 @@ Further in the paper, zooming in on the pivotal year 2010, our second assignment
 Going beyond mere observation, we introduced additional determinants---variables such as farm, innovation, and highway---aiming to unravel the complex factors influencing economic trajectories during this specific period.
 The research questions probed into growth and inequality trends and dissected the contributions of these variables to the broader economic landscape.
 
-Finaly, we delved into development effects across subgroups, scrutinized alternative functional forms, and navigated methodological challenges like heteroskedasticity and causality.
+Finally, we delved into development effects across subgroups, scrutinized alternative functional forms, and navigated methodological challenges like heteroskedasticity and causality.
 The culmination of our journey was the application of panel estimates, allowing us to capture and comprehend the intricate time-series variations in the data.
 
 ### Sub-national GDP and GDP per Capita
 
 To commence our analysis of sub-national GDP and regional inequality for the selected countries, we, as previously mentioned, collect data from Eurostat.
-We download population data categorized by broad age groups and gender, along with gross domestic product at current market prices, specifically at the NUTS 3 level @zotero-124 @zotero-126. NUTS (Nomenclature of territorial units for statistics) encompasses three levels---NUTS 1, NUTS 2, and NUTS 3, with the latter providing a detailed sub-regional perspective **(KILDE)**.
+We download population data categorized by broad age groups and gender, along with gross domestic product at current market prices, specifically at the NUTS 3 level @zotero-124 @zotero-126.
+NUTS (Nomenclature of territorial units for statistics) encompasses three levels---NUTS 1, NUTS 2, and NUTS 3, with the latter providing a detailed sub-regional perspective **(KILDE)**.
 The data is from 2000-2020.
 
 Once we incorporate these two datasets into our RStudio project, we proceed to calculate GDP per capita at the NUTS 3 level for the individual countries.
@@ -83,7 +84,8 @@ However, this can not be applied in every circumstances.
 
 Regional inequity encompasses the uneven distribution and disparities in the quality of life, wealth, and overall living standards among individuals within a specific region.
 In our analysis of regional inequity for the chosen countries, we employ the population-weighted GDP Gini coefficients.
-These coefficients are numerical measures that can range from 0 to 1.@zotero-120. A value of 0 indicates no inequity, while higher values signify increased levels of inequity within the country or region.
+These coefficients are numerical measures that can range from 0 to 1.\@zotero-120.
+A value of 0 indicates no inequity, while higher values signify increased levels of inequity within the country or region.
 The upper limit of 1 corresponds to absolute inequity.
 The calculation of these coefficients follows the formula:
 
@@ -268,6 +270,8 @@ In short, the analysis of the correlation provides valuable insights that can gu
 
 ### Alternative Functional Forms:
 
+**TA MED KORRELASJONSMATRISENE HELT I STARTEN AV PART 3 i assignment 3**
+
 Further in the assignment, we will choose alternative functional forms (logarithmic, quadratic, cubic).
 
 A logarithmic form may be appropriate to model the relationship between income inequality (gini_n2) and gross domestic product per capita (GDP_per_capita) in Spain and the Netherlands.
@@ -282,6 +286,8 @@ The regression model for Spain is given as: \`log_GDP_per_capita = 9.9493 - 0.00
 The coefficient for \`log_gini_n2\` is negative (-0.0022), suggesting that an increase in income inequality is associated with a decrease in GDP per capita in Spain.
 The regression model for the Netherlands is given as: \`log_GDP_per_capita = 9.8536 - 0.1485 \* log_gini_n2\`.
 The coefficient for \`log_gini_n2\` is also negative (-0.1485), indicating that an increase in income inequality is linked to a decrease in GDP per capita in the Netherlands.
+
+**HER MÅ VI TA MED RESTEN**
 
 ### **Heteroskedasticity Testing by** **Breusch Pagan Test**
 
@@ -359,8 +365,8 @@ In many instances, the observed negative effect on regional inequality calls for
 ## Appendix
 
 ```{r}
-#GDP
 #| echo: FALSE
+#GDP
 GDP <- read_csv("GDP.csv", show_col_types = FALSE)
 
 NO_GDP <- GDP |> 
@@ -372,8 +378,8 @@ GDP <- GDP |>
 ```
 
 ```{r}
-#Population
 #| echo: FALSE
+#Population
 population <- read_csv("population.csv", show_col_types = FALSE)
 
 population <- population |> 
@@ -678,6 +684,7 @@ regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/10000
 
 huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
 ```
+
 ```{r}
 #| echo: FALSE
 merged_farm <- left_join(SN2010, farm, join_by(year, id_nuts2))
