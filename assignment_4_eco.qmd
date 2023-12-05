@@ -529,6 +529,11 @@ for (country_code in country_codes) {
 ```
 
 ```{r}
+# Perform regression on the combined dataset
+regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
+```
+
+```{r}
 #| label: tbl-four
 #| tbl-cap: "original linear model"
 # Display regression results using huxreg
@@ -672,6 +677,10 @@ regression_innovationp_es <- lm(gini_n2 ~ I(newfirms/10000) + I(population/10000
 regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "NL"))
 
 huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+```{r}
+#| echo: FALSE
+merged_farm <- left_join(SN2010, farm, join_by(year, id_nuts2))
 ```
 
 ```{r}
@@ -828,7 +837,7 @@ hetero_test_original <- bptest(regression_model_all_countries)
 
 ```{r}
 #| label: tbl-ten
-#| tbl-cap: "Hetroskedasticity test for the original model
+#| tbl-cap: "Hetroskedasticity test for the original model"
 print(hetero_test_original)
 ```
 
