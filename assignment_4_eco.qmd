@@ -1,19 +1,653 @@
 ---
 title: "Assigment_4_eco"
-format: html
+format: pdf
 editor: visual
 ---
 
+```{r}
+#| label: setup
+#| message: false
+#| output: false
+#| echo: FALSE
+library(tidyverse)
+library(dplyr)
+library(dineq)
+library(ineq)
+library(magrittr)
+library(huxtable)
+library(broom)
+library(readr)
+library(lmtest)
+library(plm)
+```
+
 ## Eurostat EDA
+
+### Introduction
 
 In this paper, we aim to conduct an explanatory data analysis of various statistics for a diverse set of European countries.
 Our focus will be on exploring sub-national GDP and regional inequities within the chosen nations.
 The countries under examination include Ireland (IE), Poland (PL), Spain (ES), Slovenia (SI), Netherlands (NL), Greece (GR), Norway (NO), and Albania (AL).
 
-The paper will be organized into four distinct parts, each contributing to a comprehensive understanding of the economic landscape.
-In the first part, we delve into sub-national GDP and regional disparities using data sourced from Eurostat.
-Specifically, our analysis will be based on GDP and population statistics spanning the years 2000 to 2020.
-NUTS (Nomenclature of territorial units for statistics) encompasses three levels---NUTS 1, NUTS 2, and NUTS 3, with the latter providing a detailed sub-regional perspective \[\@GlossaryNomenclatureTerritorial2021\].
+In our first part of this paper, the focus is on dissecting subnational Gross Domestic Product (GDP) and GDP per capita.
+Our objectives were clear: understand the patterns of economic performance at the regional level and delve into the intricacies of regional inequality.
+By calculating the Gini coefficient, we sought to quantify and interpret the disparities within each country, laying the groundwork for a nuanced understanding of economic heterogeneity.
 
-As we progress through the paper, parts 2, 3, and 4 will unfold gradually, offering a deeper exploration of the chosen countries and their economic dynamics.
-Subsequent sections will build upon the foundation laid in the initial part, allowing for a comprehensive and insightful analysis of the selected European nations.
+Further in the paper, zooming in on the pivotal year 2010, our second assignment delved into the dynamics of economic growth and inequality.
+Going beyond mere observation, we introduced additional determinants---variables such as farm, innovation, and highway---aiming to unravel the complex factors influencing economic trajectories during this specific period.
+The research questions probed into growth and inequality trends and dissected the contributions of these variables to the broader economic landscape.
+
+Finaly, we delved into development effects across subgroups, scrutinized alternative functional forms, and navigated methodological challenges like heteroskedasticity and causality.
+The culmination of our journey was the application of panel estimates, allowing us to capture and comprehend the intricate time-series variations in the data.
+
+### Sub-national GDP and GDP per Capita
+
+To commence our analysis of sub-national GDP and regional inequality for the selected countries, we, as previously mentioned, collect data from Eurostat.
+We download population data categorized by broad age groups and gender, along with gross domestic product at current market prices, specifically at the NUTS 3 level @zotero-124 @zotero-126. NUTS (Nomenclature of territorial units for statistics) encompasses three levels---NUTS 1, NUTS 2, and NUTS 3, with the latter providing a detailed sub-regional perspective **(KILDE)**.
+The data is from 2000-2020.
+
+Once we incorporate these two datasets into our RStudio project, we proceed to calculate GDP per capita at the NUTS 3 level for the individual countries.
+This calculation is achieved by dividing GDP by the population figure, and it can be expressed using the following formula:
+
+![](images/formel.png){fig-align="center"}
+
+In @tbl-one we see the mean, variance, max.
+and min. values in GDP per capita for each of the countries.
+
+Albania exhibits a relatively modest mean GDP, with considerable variance.
+The maximum and minimum GDP values suggest a range reflecting the economic diversity within the country.
+Greece demonstrates a higher mean GDP compared to Albania, but the substantial variance indicates notable economic disparities.
+The range from minimum to maximum GDP underscores the economic heterogeneity.
+Spain exhibits a higher mean GDP, indicating a more robust economic performance.
+However, the variance suggests variations in economic output across different regions or time periods.
+Ireland stands out with a significantly higher mean GDP, but the considerable variance and a wide range between maximum and minimum GDP values indicate potential economic volatility.
+
+The Netherlands shows a robust mean GDP, and while there is variance, the range between maximum and minimum GDP is relatively moderate.
+Norway boasts the highest mean GDP in the dataset.
+The variance and range suggest a stable but comparatively concentrated economic landscape.
+Poland's mean GDP is lower, and there is considerable variance, reflecting economic diversity.
+The range between maximum and minimum GDP values underscores the disparities within the country.
+Slovenia shows a moderate mean GDP, with variance indicating economic variations.
+The range between maximum and minimum GDP values highlights regional economic differences.
+
+It may be good to note that Ireland (IE) and Norway (NO) have the highest mean, while Albania (AL) and Poland (PO) have the lowest.
+We also see an extremely high range between min. and max.
+values in Ireland (IE).
+
+Its reason to believe that high population equals high GDP based on the fact that it is more people that contributes to the GDP.
+However, this can not be applied in every circumstances.
+
+### Regional Inequity
+
+Regional inequity encompasses the uneven distribution and disparities in the quality of life, wealth, and overall living standards among individuals within a specific region.
+In our analysis of regional inequity for the chosen countries, we employ the population-weighted GDP Gini coefficients.
+These coefficients are numerical measures that can range from 0 to 1.@zotero-120. A value of 0 indicates no inequity, while higher values signify increased levels of inequity within the country or region.
+The upper limit of 1 corresponds to absolute inequity.
+The calculation of these coefficients follows the formula:
+
+$$
+GINIW_j=\frac{1}{2 \bar{y_j}} \sum_{i}^{n_j}\sum_{l}^{n_j}\frac{p_i}{P_j} \frac{p_l}{P_j} |y_i-y_l|
+$$
+
+The first thing we would like to comment on is that there are no gini values for Norway.
+This is because there are missing data for Norway in both data sets from Eurostat.
+We therefore do not want to include Norway further in the rescues as this gives us incomplete data.
+
+As we can see from @tbl-two, a plot of all the countries we have been tasked to analyze, we see that there are two regions from Ireland that have the highest Gini values, which are 0.249 and 0.245.
+Furthermore, there are a couple of regions in the Netherlands that have a Gini value from 0.224-0.241.
+
+We also wanted to make a plot only including Spain and Poland, @tbl-three, in the plot.
+This is because these countries have the most observations, and therefore give a more realistic picture of the countries.
+Ireland, for example, deals with 3 regions where one region has quite a lot of development, but this gives us little insight into how the rest of the country's values are.
+
+What is similar about both Spain and Poland is that there is a big jump in the Gini value between the lowest and the highest region.
+There are three of the regions in Poland that stand out a little as they have no data observations from 2000 to 2009 and 2014.
+
+The observed variation in income inequality between regions in the assigned countries is of great importance.
+It emphasizes the need for targeted, region-specific interventions to address and alleviate inequalities in income distribution and promote economic justice at the local level.
+These variations in Gini coefficients indicate that a one-size-fits-all approach to economic policy may not be effective, as the factors driving income inequality may vary significantly between regions.
+
+### Growth and inequity
+
+In the second part of this paper, we will delve into the exploration of growth and inequity within our selected subset of countries.
+This section will predominantly involve regression analyses, commencing with an examination of the impact of regional development $y_j$ on regional inequality $GINIW_j$.
+Later in this segment, we will proceed to estimate a multiple linear regression model incorporating additional variables that may contribute to inequity, details of which will be elucidated subsequently.
+For the sake of simplicity, our focus in these analyses will be confined to the year 2010.
+
+One theory we have is that when a country's Gross Domestic Product (GDP) per capita increases, there is a corresponding decrease in the Gini coefficient, suggesting that higher economic development is associated with reduced income inequality.Economic growth is often associated with a decrease in income inequality.
+As a country's economy expands and its Gross Domestic Product (GDP) per capita increases, more opportunities for employment, better access to education, and investments in public services become possible.
+This can lead to an improvement in living standards and a more equal distribution of income among the population.
+
+### **Model Estimation:**
+
+We will carry out a model estimate with regional development $y_j$ as the independent variable and regional inequality $GINIW_j$ as dependent variable.
+@tbl-four is a linear regression analysis to assess the relationship between regional development and regional inequality for our countries.
+Due to missing data from 2010 in some countries, we only have the following countries Spain, Poland, the Netherlands, Slovenia and Greece.
+
+Dependent variable (Regional inequality - Gini coefficient): We have chosen the Gini coefficient as a measure of regional inequality, as it gives a quantitative indication of the distribution of income/wealth within a region.
+Higher Gini coefficient indicates greater inequality.
+
+Independent variable (Regional development - GDP per capita): We have chosen GDP per capita as the measure of regional development, as it represents the economic performance per inhabitant and can indicate the level of prosperity in a region.
+
+The linear regression model from @tbl-four linking GDP_per_capita/10000 and gini_n2 is highly significant (\`\*\*\*\`).
+The intercept, estimating gini_n2 when GDP_per_capita/10000 is zero, is 0.103440.
+The coefficient for GDP_per_capita/10000 is -0.023270, indicating a decrease of approximately 0.023270 in estimated gini_n2 for each unit increase in GDP_per_capita/10000.
+Both intercept and coefficient significance, reflected by \`\*\*\*\`, underscores a robust statistical relationship.
+The model's residual standard error is 0.05272, capturing observed \`gini_n2\` variability.
+The Multiple R-squared (14.47%) and Adjusted R-squared (0.1289) quantify the model's explanatory power.
+The F-statistic's p-value (0.003824) below the significance level confirms the model's overall statistical significance.
+In summary, the linear regression evidences a significant negative link between GDP_per_capita/10000 and gini_n2, though the model explains a modest portion of gini_n2 variability.
+
+We want to look at each country separately in the regression analysis.
+It helps us understand specific factors and variations in different countries.
+This approach simplifies dealing with issues such as differences in data patterns and non-linearities unique to each country.
+By analyzing countries individually, we can gain more accurate insights and make meaningful comparisons.
+From @tbl-five we can read from each country:
+
+**Results for ES in 2010 - Model (1)**
+
+In the linear regression for Spain (ES) in 2010, a significant p-value of 0.301 was observed for GDP per capita, with an R-squared value of 0.063.
+This indicates that there is no significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient) in Spain in 2010.
+The low R-squared value suggests that only 6.3% of the variation in the Gini coefficient can be explained by the variability in GDP per capita.
+
+In the linear regression for Spain (ES) in 2010, we observed the following results: The Intercept was 0.039, and for GDP per capita (Beta for GDP per capita), the value was -0.010.
+This indicates a negative relationship between GDP per capita and the Gini index in Spain.
+In other words, as GDP per capita increases, the Gini index decreases.
+
+The model for Spain has a low R-squared value, indicating that the GDP_per_capita variable does not explain much of the variation in gini_n2.
+The p-value for the coefficient of GDP_per_capita is also relatively high, suggesting that it may not be statistically significant.
+
+**Results for PL in 2010 - Model (2)**
+
+For Poland (PL) in 2010, the p-value for GDP per capita was 0.572, and the R-squared value was 0.037.
+This again indicates no significant relationship between economic development and regional inequality for Poland in 2010.
+The high p-value and low R-squared value suggest a weak explanation of the Gini coefficient based on GDP per capita.
+
+In the case of Poland (PL) in 2010, the results were as follows: The Intercept was 0.139, and for GDP per capita (Beta for GDP per capita), the value was -0.021.
+This means there is also a negative relationship between GDP per capita and the Gini index in Poland.
+An increase in GDP per capita reduces the Gini index.
+
+The model for Poland has a very low R-squared and a negative adjusted R-squared, indicating that the GDP_per_capita variable does not provide a good fit to the data.
+The p-value for the coefficient of GDP_per_capita is high, suggesting it is not statistically significant.
+
+**Results for NL in 2010 - Model (3)**
+
+Netherlands (NL) in 2010 exhibited a p-value of 0.063 for GDP per capita and an R-squared value of 0.333.
+This suggests a moderate relationship between economic development and regional inequality for the Netherlands in 2010.
+The relatively low p-value and moderate R-squared value imply that some of the variation in the Gini coefficient can be explained by the variation in GDP per capita.
+
+Looking at the Netherlands (NL) in 2010, the results were as follows: The Intercept was 0.167, and for GDP per capita (Beta for GDP per capita), the value was -0.037.
+Again, this indicates a negative relationship between GDP per capita and the Gini index in the Netherlands.
+An increase in GDP per capita reduces the Gini index.
+
+The model for the Netherlands has a moderate R-squared value, indicating that GDP_per_capita has some explanatory power, though it is not very high.
+The p-value for GDP_per_capita suggests it might be marginally significant.
+
+**Results for SI in 2010 - Model (4)**
+
+Results for Slovenia (SI) in 2010 are unusual.
+There is a regression error due to the absence of residual degrees of freedom, indicating insufficient variation in the data to perform a meaningful regression.
+These results should not be interpreted due to this error.
+
+The model for Slovenia has a perfect R-squared of 1, but it also indicates there are no degrees of freedom, suggesting a problem with the model.
+This could be due to a very small sample size.
+
+**Results for EL in 2010 - Model (5)**
+
+Greece (EL) in 2010 displayed a significant relationship between economic development (GDP per capita) and regional inequality (Gini coefficient).
+The p-value was 0.010, and the R-squared value was 0.470.
+This indicates that an increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
+
+For Greece (EL) in 2010, the following findings were made: The Intercept was -0.026 and for GDP per capita (Beta for GDP per capita), the value was 0.048.
+This suggests a positive relationship between GDP per capita and the Gini index for Greece.
+An increase in GDP per capita leads to an increase in the Gini index.
+
+The model for Greece has a relatively high R-squared, indicating that the GDP_per_capita variable explains a substantial portion of the variation in gini_n2.
+The p-value for GDP_per_capita is low, suggesting it is statistically significant.
+
+Furthermore, in the thesis we want to include Spain, Greece and the Netherlands.
+Will choose to include Spain (ES) and the Netherlands (NL) further in the thesis, even though they showed that the connections between GDP per capita and the Gini coefficient are often not very strong.
+This is because they still have lower p-values and higher R-squared values compared to the other countries.
+This indicates that there is a certain degree of explanatory power in these two models, although the connections may not be very strong.
+
+In the case of Greece (EL), the results actually show a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita).
+This indicates that the increase in GDP per capita is associated with a significant increase in the Gini coefficient for Greece in 2010.
+Therefore, Greece will be an important country to include in our further analysis and discussion in the thesis.
+It is particularly important to look for positive correlations between economic development and regional inequality.
+
+Following @fig-es and @fig-nl: both Spain and the Netherlands have a downward slope, the Netherlands a steeper slope than Spain.
+If we look at @fig-el, Greece, on the other hand, we see that the line is going up.
+This supports our results from the regression model with that Greece shows a significant positive correlation between regional inequality (Gini coefficient) and economic development (GDP per capita).
+
+### Determinants of inequity
+
+Futhermore, we want to explore other determinants of inequity.
+We have chosen to add three data sets that we will use as variables into our subset data to see what impact innovation, farms and highways have on regional inequality.
+@zotero-124 @zotero-126 @zotero-148
+
+We hypothesize that the number of newly established companies, farm area, and the length of highways in a region have a significant impact on regional inequality in Spain, the Netherlands, and Greece.
+More specifically, we expect that an increase in the number of newly established companies and farm area in the region will be associated with a reduction in regional inequality, while an increase in the length of highways may also impact regional inequality.
+We will conduct analyses to test this hypothesis using statistical methods to assess whether the variables indeed have a significant effect on regional inequality in the three countries.
+
+The one data set we have chosen to include as a variable does not have data from Greece, so we will only get figures for Spain and the Netherlands when we look at whether new firms have an impact on regional inequality.
+
+Based on the results from our three regression models, @tbl-six, @tbl-seven, @tbl-eight, for "New Firms," "Farm," and "Highway," it appears that none of these variables have a significant linear relationship with regional inequality (gini levels) in Spain and the Netherlands in 2010.
+This implies that we cannot confirm our original hypothesis that an increase in the number of new startup firms, farm area, or highway length will have a substantial impact on regional inequality in the selected countries.
+This indicates a need to explore other potential factors that may play a more significant role in explaining variations in gini levels in these countries.
+Further research and the inclusion of additional relevant variables can contribute to a more comprehensive understanding of regional inequality.
+In summary, the regression analyses for Spain, the Netherlands, and Greece have revealed varying relationships between certain factors and regional inequality.
+
+Spain (ES):
+
+The analysis found that the number of newly established companies ("newfirms") had no significant impact on regional inequality initially.
+However, when population size was introduced as a control variable, a positive relationship emerged.
+Larger populations were associated with lower regional inequality.
+Additionally, the study identified a positive connection between the agricultural area ("farm") and regional inequality.
+Lastly, the length of highways ("KM") was found to have a moderate positive relationship with regional inequality in Spain.
+
+Netherlands (NL):
+
+Similar to Spain, the Netherlands showed no significant relationship between newly established companies and regional inequality.
+The inclusion of population as a control variable did not alter this result.
+Moreover, neither agricultural area ("farm") nor highway length exhibited significant impacts on regional inequality in the Netherlands.
+
+Greece (EL):
+
+Unfortunately, due to missing data, the analysis for Greece provided limited insights.
+It was not possible to determine the relationship between newly established companies, agricultural area ("farm"), or highway length and regional inequality in Greece.
+
+These findings emphasize the diversity of factors influencing regional inequality in different countries.
+While Spain exhibited significant associations between population, agricultural area, highway length, and regional inequality, the Netherlands did not show significant relationships with the selected variables.
+Further investigations and data completeness are required for a comprehensive understanding of regional inequality dynamics in Greece.
+
+Futhermore we have looked at the correlation between the Gini coefficient (gini_n2) and gross domestic product per capita (GDP per capita) in each of the countries (Spain, the Netherlands, and Greece).
+This provides valuable insight into the relationship between economic inequality and economic prosperity in these regions.
+In short, the analysis of the correlation provides valuable insights that can guide decision-makers, politicians and organizations in the design of targeted measures to deal with economic inequality.
+
+### Alternative Functional Forms:
+
+Further in the assignment, we will choose alternative functional forms (logarithmic, quadratic, cubic).
+
+A logarithmic form may be appropriate to model the relationship between income inequality (gini_n2) and gross domestic product per capita (GDP_per_capita) in Spain and the Netherlands.
+This is because the correlations are very weak and negative.
+A logarithmic form can help capture a potential non-linear relationship that may be hidden in the data.
+
+A cubic form may be relevant to model the relationship in Greece, where the correlation is positive and relatively strong.
+This may suggest a crooked relationship where an increase in income inequality can lead to a significant increase in gross domestic product per inhabitant, but there may be an upper limit to this increase.
+
+As wee see at @tbl-nine we have a regression model in logarithmic form for both Spain and the Netherlands.
+The regression model for Spain is given as: \`log_GDP_per_capita = 9.9493 - 0.0022 \* log_gini_n2\`.
+The coefficient for \`log_gini_n2\` is negative (-0.0022), suggesting that an increase in income inequality is associated with a decrease in GDP per capita in Spain.
+The regression model for the Netherlands is given as: \`log_GDP_per_capita = 9.8536 - 0.1485 \* log_gini_n2\`.
+The coefficient for \`log_gini_n2\` is also negative (-0.1485), indicating that an increase in income inequality is linked to a decrease in GDP per capita in the Netherlands.
+
+### **Heteroskedasticity Testing by** **Breusch Pagan Test**
+
+The Breusch-Pagan test will be applied to investigate heteroskedasticity in our linear regression models.
+This test aims to discern whether there is evidence of variable error variance (heteroscedasticity) or consistent error variance (homoscedasticity).
+The results will inform the reliability of our regression outcomes, with heteroskedasticity potentially affecting the validity of the analysis.
+
+Reading from @tbl-ten, we see that the statistical Significance (p-value):The p-value of 0.1816 is greater than common significance levels like 0.05.
+This suggests that we do not have sufficient evidence to reject the null hypothesis of homoskedasticity.
+In other words, there is no statistically significant evidence of heteroskedasticity in the original linear model for all countries based on the Breusch-Pagan test.
+
+Conclusion: Given these results, we cannot conclude that there is heteroskedasticity in the original linear model for all countries.
+The model appears to handle the variation in errors uniformly across all observations.
+
+If the p-value had been lower (typically below 0.05), it would have indicated evidence of heteroskedasticity.
+In such cases, a more appropriate model might include corrections, such as robust standard errors, to address potential heteroskedasticity.
+
+As wee can read off @tbl-eleven from Spain, the Netherlands and Greece:
+
+Spain: The p-value of 0.6383 is larger than common significance levels (e.g., 0.05), suggesting that there is no significant evidence of heteroskedasticity in the model for Spain.
+The model appears to handle the variation in errors effectively, showing homoskedasticity.
+
+The Netherlands: Similar to the case of Spain, the p-value of 0.3173 is greater than conventional significance levels, indicating no significant evidence of heteroskedasticity in the model for the Netherlands.
+The model seems to account for error variance consistently across observations.
+
+Greece: For the cubic model in Greece, the p-value of 0.3461 is higher than common significance levels.
+This suggests that there is no significant evidence of heteroskedasticity in the cubic model for Greece.
+The model handles the variance in errors effectively.
+
+### Causality
+
+Based on the results of the Breusch-Pagan tests for both the original model and the alternative models, it seems that none of the models provide strong evidence of heteroskedasticity.
+The p-values are all relatively high, not providing sufficient grounds to reject the null hypothesis of homoskedasticity.
+
+As we can observe, neither the original model nor the alternative models show strong evidence of heteroskedasticity.
+There are several strategies one can employ to induce evidence of heteroskedasticity in the models.
+To manipulate the error term by adding extreme values for specific observations or by introducing exponential growth can be strategies to generate heteroskedasticity in the models.
+
+Adding Extreme Values: By introducing extreme values to the error term for selected observations, you create variation in the error term that may manifest as heteroskedasticity.
+This can be achieved by identifying specific data points that experience a significant increase in the variance of the error term.
+
+Exponential Growth in the Error Term: Introducing exponential growth in the error term as a function of one or more independent variables will also lead to increasing variance.
+This can mimic situations where the uncertainty in observations grows exponentially with changes in the independent variables.
+
+**Panel Estimates:**
+
+In the context of fixed-effects panel estimation models in @tbl-twelve, we explored the impact of GDP per capita on regional inequality, incorporating different combinations of fixed effects---Country, Year, NUTS2, and their various combinations.
+The coefficient for GDP per capita remained consistently positive and highly statistically significant across all model specifications (\*\*\* p \< 0.01), indicating a robust positive association between GDP per capita and regional inequality.
+
+Key descriptive statistics include:
+
+-   The dataset comprises 1232 observations for each fixed effect configuration, ensuring a robust sample size.
+-   R-squared values, representing the proportion of variance explained by the models, consistently hover around 0.124, suggesting a moderate level of explanatory power.
+-   F-statistics, testing the overall significance of the models, are consistently high at 164.325, emphasizing that the inclusion of fixed effects significantly enhances the model fit.
+-   Corresponding p-values for the F-statistics are all extremely low (0.000), providing strong evidence against the null hypothesis of no effect.
+
+In summary, our fixed-effects panel models consistently reveal a positive and highly significant relationship between GDP per capita and regional inequality, regardless of the combination of fixed effects considered.
+These models exhibit a reasonable explanatory power, as indicated by the R-squared values, and the inclusion of fixed effects significantly improves the overall model fit, as reflected in the high F-statistics and low p-values.
+These findings underscore the meaningful predictive capacity of GDP per capita concerning regional inequality within the framework of our panel dataset.
+
+## Final Conclusion
+
+In conclusion, our analysis sheds light on the impact of development on regional inequality in the specific countries under scrutiny.
+Contrary to the hypothesized positive effect, our findings indicate a noteworthy and consistent increase in the gap of inequality across the examined regions.
+The rise in Gini coefficients implies a negative overall effect, suggesting that the process of development has exacerbated regional disparities.
+
+Evidently, the trend observed underscores a pattern wherein leading regions, often associated with capitals and prominent business clusters, experience continued growth, leaving lower regions struggling to keep pace.
+This phenomenon accentuates the existing gap and poses challenges, particularly in areas of education, health, and general social securities, crucial for overall societal progress.
+The disparities revealed in our data align with the prevailing governance policies of each country, where those with robust social policies, exemplified by countries like Sweden, actively work towards narrowing the inequality gap.
+
+It becomes apparent that the nuanced relationship between development and regional inequality requires careful consideration of policy frameworks.
+While development can be a driving force for economic progress, our findings emphasize the importance of inclusive policies that address disparities and ensure equitable distribution of resources.
+In many instances, the observed negative effect on regional inequality calls for a strategic reevaluation of development strategies to foster balanced and sustainable growth across all regions.
+
+The first we did was that we found values in GDP per capita for each of our countries and we also look at gini coefficients in the countries over time.
+
+Reading of @tbl-one Albania exhibits a relatively modest mean GDP, with considerable variance.
+The maximum and minimum GDP values suggest a range reflecting the economic diversity within the country.
+Greece demonstrates a higher mean GDP compared to Albania, but the substantial variance indicates notable economic disparities.
+The range from minimum to maximum GDP underscores the economic heterogeneity.
+Spain exhibits a higher mean GDP, indicating a more robust economic performance.
+However, the variance suggests variations in economic output across different regions or time periods.
+Ireland stands out with a significantly higher mean GDP, but the considerable variance and a wide range between maximum and minimum GDP values indicate potential economic volatility.
+The Netherlands shows a robust mean GDP, and while there is variance, the range between maximum and minimum GDP is relatively moderate.
+Norway boasts the highest mean GDP in the dataset.
+The variance and range suggest a stable but comparatively concentrated economic landscape.
+Poland's mean GDP is lower, and there is considerable variance, reflecting economic diversity.
+The range between maximum and minimum GDP values underscores the disparities within the country.
+Slovenia shows a moderate mean GDP, with variance indicating economic variations.
+The range between maximum and minimum GDP values highlights regional economic differences.
+
+It may be good to note that Ireland (IE) and Norway (NO) have the highest mean, while Albania (AL) and Poland (PO) have the lowest.
+We also see an extremely high range between min. and max.
+values in Ireland (IE).
+
+Furthermore, we will look at gini coefficients in our countries.
+The Gini coefficients help us assess the economic inequality of a population or the distribution of income and wealth among the members of that population.The Gini coefficient is usually a value between 0 and 1, where 0 indicates complete equality (everyone has the same income or wealth), and 1 indicates complete inequality (one person has all the income or wealth, while everyone else has none).
+**\@zotero-120KIDLE**
+
+In @tbl-two, all eight countries are included, but we chose to focus only on Spain and Poland, NUTS 2, as you can see in @tbl-three.
+This is because these countries have the most observations, and therefore give a more realistic picture of the countries.
+Ireland, for example, deals with 3 regions where one region has quite a lot of development, but this gives us little insight into what the rest of the country's values are like.
+
+What both Spain and Poland have in common is that there is a big jump in the Gini value between the lowest and the highest region.
+There are three of the regions in Poland that stand out a little as they have no data observations from 2000 to 2009 and 2014.
+
+The observed disparities in income inequality across regions in the assigned countries emphasize the necessity for targeted interventions at the regional level.
+Addressing and mitigating income distribution disparities requires customized approaches, recognizing that a uniform economic policy may not be universally effective.
+The variations in Gini coefficients signify distinct factors influencing income inequality in different regions.
+Policymakers are confronted with the challenge of prioritizing these regional differences in the formulation, implementation, and evaluation of economic and social policies.
+Recognizing the unique economic circumstances of each region is imperative for designing policies aimed at reducing income inequality and fostering a more inclusive and equitable economic environment.
+Tailored, region-specific strategies enhance the effectiveness of such policies by aligning them with the specific needs and realities of individual regions.
+
+### 
+
+### 
+
+## Appendix
+
+```{r}
+#| label : tbl-one
+#| tbl-cap : "Summarize GDP" 
+result <- merged_data |> 
+  mutate(
+    geo_2 = str_sub(geo, start = 1L, end = 2L)
+  ) |> 
+  filter(geo_2 %in% c("ES", "NO", "IE", "PL", 
+                      "NL", "AL", "EL", "SI")
+         ) |> 
+# removes data for obs that have no values
+# for GDP since 2008
+  filter(!is.na(GDP_per_capita)) |> 
+  group_by(geo_2) |> 
+  summarize(
+    Mean = mean(GDP_per_capita),
+    Variance = var(GDP_per_capita),
+    Max = max(GDP_per_capita),
+    Min = min(GDP_per_capita)
+  )
+```
+
+```{r}
+result2 <- merged_data_temp |> 
+  mutate(
+    id_nuts2 = str_sub(id_nuts2, start = 1L, end = 2L)
+  ) |> 
+  filter(id_nuts2 %in% c("ES", "NO", "IE", "PL", 
+                      "NL", "AL", "EL", "SI")
+         ) |> 
+  # tar bort data for obs som ikke har verdier 
+  # for GDP helt fra 2008
+  filter(!is.na(gini_n2)) |> 
+  group_by(id_nuts2) |> 
+  summarize(
+    Mean = mean(gini_n2),
+    Variance = var(gini_n2),
+    Max = max(gini_n2),
+    Min = min(gini_n2)
+  )
+```
+
+```{r}
+#| echo: FALSE
+main_data_nuts2 <- merged_data_temp %>%
+  group_by(id_nuts2, year) %>%
+  arrange(id_nuts2, year) %>%
+  filter(row_number() == 1)
+```
+
+```{r}
+#| label: tbl-two
+#| tbl-cap: "Scatter plot of Gini Koefficients over time" 
+#make a plot with all nuts2 values to get an overview
+ggplot(main_data_nuts2, aes(x = year, y = gini_n2, color = id_nuts2)) +
+  geom_point() +
+  labs(title = "Scatter Plot of Gini-koeffisienter over time",
+       x = "Year",
+       y = "Gini-koeffisient") +
+  theme_minimal()
+```
+
+```{r}
+#| label : tbl-three
+#| tbl-cap : "Scatter plot of Gini Koefficients for some countries" 
+main_data_nuts2 |> 
+  filter(id_nuts0 == "PL" | 
+           id_nuts0 == "ES") |> 
+  ggplot(aes(x = year, y = gini_n2, color = id_nuts2)) +
+  geom_line() +
+  labs(title = "Scatter Plot av Gini-koeffisienter over tid",
+       x = "År",
+       y = "Gini-koeffisient") +
+  theme_minimal()
+```
+
+```{r}
+#| echo: FALSE
+# Perform regression on the combined dataset
+regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
+```
+
+```{r}
+#| label: tbl-four
+#| tbl-cap: "original linear model"
+# Display regression results using huxreg
+huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| echo: FALSE
+# Filter the dataset for the year 2010
+data_2010 <- main_data2 %>%
+  filter(year == 2010)
+
+# List of country codes
+country_codes <- c("ES", "PL", "NL", "SI", "EL")
+
+# Create an empty list to store regression models
+regression_models <- list()
+
+for (country_code in country_codes) {
+  # Filter the dataset for each country and check for data availability
+  data <- data_2010 %>%
+    filter(id_nuts0 == country_code)
+  
+  if (nrow(data) > 0) {
+    # Perform regression directly within the loop
+    regression_model <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data)
+    
+    # Add the model to the list
+    regression_models[[country_code]] <- regression_model
+    
+  } else {
+    cat("No data found for", country_code, "in 2010\n")
+  }
+}
+```
+
+```{r}
+#| label : tbl-five
+#| tbl-cap : "Linear regression each country" 
+huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| label: fig-es
+#| fig-cap: "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality"
+# Create a scatterplot with a regression line for Spain (ES)
+ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
+
+  labs(
+    title = "Scatter Plot for Spain (ES): Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-nl
+#| fig-cap: "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality"
+# Filter the dataset for only Netherlands (NL)
+# Create a scatterplot with a regression line for Netherlands (NL)
+ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
+  labs(
+    title = "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: fig-el
+#| fig-cap: "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality"
+subset_data |> 
+  filter(id_nuts0 == "EL") |> 
+  ggplot(aes(x = gini_n2, y = GDP_per_capita)) +
+  geom_point() +
+  geom_smooth(method = "lm", formula = y ~ x, color = "yellow", fill = "transparent") +
+  labs(
+    title = "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality",
+    x = "Regional Development",
+    y = "Regional Inequality"
+  ) +
+  theme_minimal()
+```
+
+```{r}
+#| label: tbl-six
+#| tbl-cap: "regression models for Spain, the Netherlands - innovation"
+# Create a list of regression models for Spain, the Netherlands
+regression_models_2countries <- list()
+
+# Filter the dataset for each country and check for data availability
+data_es <-  merged_innovation %>% filter(id_nuts0 == "ES")
+data_nl <- merged_innovation %>% filter(id_nuts0 == "NL")
+
+# Perform regression for Spain
+regression_model_es <- lm(gini_n2 ~ newfirms, data = data_es)
+regression_models_2countries$ES <- regression_model_es
+
+# Perform regression for the Netherlands
+regression_model_nl <- lm(gini_n2 ~ newfirms, data = data_nl)
+regression_models_2countries$NL <- regression_model_nl
+
+huxreg(regression_models_2countries$ES,regression_models_2countries$NL,
+statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| label: tbl-seven
+#| tbl-cap: "regression models for Spain,Netherlands and greece - farm"
+regression_farm_es <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "ES"))
+regression_farm_nl <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "NL"))
+regression_farm_el <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "EL"))
+huxreg(regression_farm_es, regression_farm_nl, regression_farm_el, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| label: tbl-eight
+#| tbl-cap: "regression models for Spain and the Netherlands  - highway"
+regression_highway_es <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "ES"))
+regression_highway_nl <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "NL"))
+huxreg(regression_highway_es, regression_highway_nl, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| label: tbl-nine
+#| tbl-cap: "LM model for Spain and the Netherlands"
+print("LM for Spania")
+print(lm_model_spain)
+
+print("LM for the Netherlands")
+print(lm_model_netherlands)
+```
+
+```{r}
+#| label: tbl-ten
+#| tbl-cap: "Hetroskedasticity test for the original model
+print(hetero_test_original)
+```
+
+```{r}
+#| label: tbl-eleven
+#| tbl-cap: "Hetroskedasticity test for Spaint, Nederlands and Greece"
+print(hetero_test_spain)
+print(hetero_test_netherlands)
+print(hetero_test_greece)
+```
+
+```{r}
+#| label: tbl-twelve
+#| tbl-cap: "panel estimation"
+
+huxreg(
+  list(
+    "Fixed effect Country" = plm1,
+    "Fixed effect Year" = plm2,
+    "Fixed effect NUTS2" = plm3,
+    "Fixed effect NUTS2,year" = plm4
+  ),
+  statistics = c(N = "nobs", R2 = "r.squared", FStat = "statistic", PValue = "p.value"),
+  stars = c("*" = 0.1, "**" = 0.05, "***" = 0.01),
+  note = "Note): {stars} T statistics in brackets."
+)
+```
