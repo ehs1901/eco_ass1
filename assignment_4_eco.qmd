@@ -359,6 +359,67 @@ In many instances, the observed negative effect on regional inequality calls for
 ## Appendix
 
 ```{r}
+#GDP
+#| echo: FALSE
+GDP <- read_csv("GDP.csv", show_col_types = FALSE)
+
+NO_GDP <- GDP |> 
+  filter(str_sub(geo,1,2) == "NO") |> 
+  filter(unit == "MIO_EUR")
+
+GDP <- GDP |> 
+  select(year = TIME_PERIOD, unit, geo, gdp = OBS_VALUE)
+```
+
+```{r}
+#Population
+#| echo: FALSE
+population <- read_csv("population.csv", show_col_types = FALSE)
+
+population <- population |> 
+  select(year = TIME_PERIOD, geo, population = OBS_VALUE)
+```
+
+```{r}
+#| echo: FALSE
+#Find unique geo codes in population. Use these to reduce GDP
+nuts_pop <- population |> 
+  select(geo) |> 
+  distinct() |> 
+  pull()
+
+nuts_gdp <- GDP |> 
+  select(geo) |> 
+  distinct() |> 
+  pull()
+```
+
+```{r}
+#| echo: FALSE
+nuts_inpop_notinGDP <- setdiff(nuts_pop, nuts_gdp)
+
+GDP <- GDP |>
+  filter(geo %in% nuts_pop) |> 
+  filter(unit == "MIO_EUR") |> 
+  select(-unit)
+```
+
+```{r}
+#| echo: FALSE
+merged_data <- left_join(population, GDP, join_by(year, geo)) |> 
+    filter(!geo %in% nuts_inpop_notinGDP)
+
+NO_merged <- merged_data |> 
+  filter(str_sub(geo,1,2) == "NO") 
+
+merged_data <- merged_data |> 
+  mutate(
+    GDP_per_capita = round(1000000*gdp/population, digits = 0)
+  ) |> 
+  rename(gdp_MIO = gdp)
+```
+
+```{r}
 #| label : tbl-one
 #| tbl-cap : "Summarize GDP" 
 result <- merged_data |> 
@@ -378,30 +439,26 @@ result <- merged_data |>
     Max = max(GDP_per_capita),
     Min = min(GDP_per_capita)
   )
-```
 
-```{r}
-result2 <- merged_data_temp |> 
-  mutate(
-    id_nuts2 = str_sub(id_nuts2, start = 1L, end = 2L)
-  ) |> 
-  filter(id_nuts2 %in% c("ES", "NO", "IE", "PL", 
-                      "NL", "AL", "EL", "SI")
-         ) |> 
-  # tar bort data for obs som ikke har verdier 
-  # for GDP helt fra 2008
-  filter(!is.na(gini_n2)) |> 
-  group_by(id_nuts2) |> 
-  summarize(
-    Mean = mean(gini_n2),
-    Variance = var(gini_n2),
-    Max = max(gini_n2),
-    Min = min(gini_n2)
-  )
+result |> 
+  knitr::kable()
 ```
 
 ```{r}
 #| echo: FALSE
+merged_data_temp <- merged_data %>%
+  mutate(id_nuts3 = geo, 
+         id_nuts2 = substr(geo, 1, 4),
+         id_nuts0 = substr(geo, 1, 2)) 
+
+merged_data_temp %<>% 
+  filter(population != "NA") %>%
+filter(population != 0) %>%
+  filter(GDP_per_capita != "NA") %>%
+  group_by(id_nuts2, year) %>%
+  mutate(gini_n2 = gini.wtd(GDP_per_capita, weights = population)) %>%
+  ungroup()
+
 main_data_nuts2 <- merged_data_temp %>%
   group_by(id_nuts2, year) %>%
   arrange(id_nuts2, year) %>%
@@ -436,15 +493,9 @@ main_data_nuts2 |>
 
 ```{r}
 #| echo: FALSE
-# Perform regression on the combined dataset
-regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
-```
-
-```{r}
-#| label: tbl-four
-#| tbl-cap: "original linear model"
-# Display regression results using huxreg
-huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+# remove Norway as we were not going to use it further in the assignment as mentioned earlier
+main_data2 <- main_data_nuts2 |> 
+  filter(!grepl("NO", id_nuts2))
 ```
 
 ```{r}
@@ -478,9 +529,26 @@ for (country_code in country_codes) {
 ```
 
 ```{r}
+#| label: tbl-four
+#| tbl-cap: "original linear model"
+# Display regression results using huxreg
+huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
 #| label : tbl-five
 #| tbl-cap : "Linear regression each country" 
 huxreg(regression_models$ES, regression_models$PL, regression_models$NL, regression_models$SI, regression_models$EL, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| echo: FALSE
+#Remove rows with missing values
+test <- data_2010[complete.cases(data_2010),]
+# Filter the dataset for only Spain (ES) and Netherlands (NL) and Greece (EL)
+subset_data <- subset(test, id_nuts0 %in% c("ES", "NL", "EL"))
+# Filter the dataset for only Spain (ES)
+subset_data_es <- subset_data[subset_data$id_nuts0 == "ES", ]
 ```
 
 ```{r}
@@ -500,6 +568,11 @@ ggplot(subset_data_es, aes(x = gini_n2, y = GDP_per_capita)) +
 ```
 
 ```{r}
+#| echo: FALSE
+subset_data_nl <- subset_data[subset_data$id_nuts0 == "NL", ]
+```
+
+```{r}
 #| label: fig-nl
 #| fig-cap: "Scatter Plot for Netherlands (NL): Regional Development vs. Regional Inequality"
 # Filter the dataset for only Netherlands (NL)
@@ -516,6 +589,11 @@ ggplot(subset_data_nl, aes(x = gini_n2, y = GDP_per_capita)) +
 ```
 
 ```{r}
+#| echo: FALSE
+subset_data_el <- subset_data[subset_data$id_nuts0 == "EL", ]
+```
+
+```{r}
 #| label: fig-el
 #| fig-cap: "Scatter Plot for Greece (EL): Regional Development vs. Regional Inequality"
 subset_data |> 
@@ -529,6 +607,39 @@ subset_data |>
     y = "Regional Inequality"
   ) +
   theme_minimal()
+```
+
+```{r}
+#| echo: FALSE
+#making a new dataset only for Spain, Netherlands and Greece for 2010
+SN2010 <- data_2010 |> 
+  filter(id_nuts0 %in% c("ES", "NL", "EL"))
+
+#| echo: FALSE
+highway <- read_csv("motorvei2.csv", show_col_types = FALSE)
+innovation <- read_csv("innovation.csv", show_col_types = FALSE)
+farm <- read_csv("farm1.csv", show_col_types = FALSE)
+```
+
+```{r}
+#| echo: FALSE
+#we rename one of the variables and select the ones we want
+highway <- highway |> 
+  select(KM = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+farm <- farm |> 
+  select(Area = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+innovation <- innovation |> 
+  select(newfirms = OBS_VALUE, id_nuts2 = geo, year = TIME_PERIOD)
+```
+
+```{r}
+#| echo: FALSE
+#A small comment on the dataset "innovation" is that it is data from 2013 and not 2010. So we mutate it to 2010. 
+innovation <- innovation |> 
+  mutate(year = 2010)
+
+#we merge the dataset SN2010 and innovation together
+merged_innovation <- left_join(SN2010, innovation, join_by(year, id_nuts2))
 ```
 
 ```{r}
@@ -554,6 +665,16 @@ statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.valu
 ```
 
 ```{r}
+#| label: tbl-innovation
+#| tbl-cap: "regression models for Spain,Netherlands and greece - farm"
+# Making a regression model with the variables gini_n2, newfirms, and population
+regression_innovationp_es <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "ES"))
+regression_innovationp_nl <- lm(gini_n2 ~ I(newfirms/10000) + I(population/1000000), data = merged_innovation %>% filter(id_nuts0 == "NL"))
+
+huxreg(regression_innovationp_es, regression_innovationp_nl, statistics =  c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
 #| label: tbl-seven
 #| tbl-cap: "regression models for Spain,Netherlands and greece - farm"
 regression_farm_es <- lm(gini_n2 ~ I(Area/100000), data = merged_farm %>% filter(id_nuts0 == "ES"))
@@ -565,9 +686,65 @@ huxreg(regression_farm_es, regression_farm_nl, regression_farm_el, statistics = 
 ```{r}
 #| label: tbl-eight
 #| tbl-cap: "regression models for Spain and the Netherlands  - highway"
+
+merged_highway <- left_join(merged_farm, highway, join_by(year, id_nuts2))
+
 regression_highway_es <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "ES"))
 regression_highway_nl <- lm(gini_n2 ~ I(KM/100000), data = merged_highway %>% filter(id_nuts0 == "NL"))
 huxreg(regression_highway_es, regression_highway_nl, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| echo: FALSE
+#Making a correlation matrices for Spania
+cor_matrix_spain <- cor(subset_data_es[, c("gini_n2", "GDP_per_capita")])
+
+# Making a correlation matrices for Nederland
+cor_matrix_netherlands <- cor(subset_data_nl[, c("gini_n2", "GDP_per_capita")])
+
+#Making a correlation matrices for Hellas
+cor_matrix_greece <- cor(subset_data_el[, c("gini_n2", "GDP_per_capita")])
+```
+
+```{r}
+#| echo: FALSE
+print("Correlation matrices for Spania")
+print(cor_matrix_spain)
+
+print("Correlation matrices for the Netherlands")
+print(cor_matrix_netherlands)
+
+print("Correlation matrices for Greece")
+print(cor_matrix_greece)
+```
+
+```{r}
+#| echo: FALSE
+# Convert the data to the logarithm for Spain
+subset_data_es$log_gini_n2 <- log(subset_data_es$gini_n2)
+subset_data_es$log_GDP_per_capita <- log(subset_data_es$GDP_per_capita)
+
+# Convert the data to the logarithm for the Netherlands
+subset_data_nl$log_gini_n2 <- log(subset_data_nl$gini_n2)
+subset_data_nl$log_GDP_per_capita <- log(subset_data_nl$GDP_per_capita)
+```
+
+```{r}
+#| echo: FALSE
+# Remove "-Inf" values from log_gini_n2 for Spain
+subset_data_es <- subset_data_es[!is.infinite(subset_data_es$log_gini_n2), ]
+
+# Remove "-Inf" values from log_gini_n2 for the Netherlands
+subset_data_nl <- subset_data_nl[!is.infinite(subset_data_nl$log_gini_n2), ]
+```
+
+```{r}
+#| echo: FALSE
+# Fit linear regression for Spain
+lm_model_spain <- lm(log_GDP_per_capita ~ log_gini_n2, data = subset_data_es)
+
+# Fit linear regression for the Netherlands
+lm_model_netherlands <- lm(log_GDP_per_capita ~ log_gini_n2, data = subset_data_nl)
 ```
 
 ```{r}
@@ -581,9 +758,99 @@ print(lm_model_netherlands)
 ```
 
 ```{r}
+#| echo: FALSE
+# Regression coefficients for Spain
+a_spain <- coef(lm_model_spain)["log_gini_n2"]
+b_spain <- coef(lm_model_spain)["(Intercept)"]
+
+# Regression coefficients for the Netherlands
+a_netherlands <- coef(lm_model_netherlands)["log_gini_n2"]
+b_netherlands <- coef(lm_model_netherlands)["(Intercept)"]
+```
+
+```{r}
+#| echo: FALSE
+# Print regression coefficients for Spain
+print("Regresjonskoeffisienter for Spani")
+print(paste("a_spain:", a_spain))
+print(paste("b_spain:", b_spain))
+
+# Print regression coefficients for the Netherlands
+print("Regresjonskoeffisienter for Nederland")
+print(paste("a_netherlands:", a_netherlands))
+print(paste("b_netherlands:", b_netherlands))
+```
+
+```{r}
+#| echo: FALSE
+# Create logarithmically transformed columns for Greece
+subset_data_el$log_gini_n2 <- log(subset_data_el$gini_n2)
+subset_data_el$log_GDP_per_capita <- log(subset_data_el$GDP_per_capita)
+```
+
+```{r}
+#| echo: FALSE
+# Fit cubic regression for Greece
+lm_model_greece_cubic <- lm(log_GDP_per_capita ~ log_gini_n2 + I(log_gini_n2^2) + I(log_gini_n2^3), data = subset_data_el)
+```
+
+```{r}
+#| echo: FALSE
+print(lm_model_greece_cubic)
+```
+
+```{r}
+#| echo: FALSE
+# Regression coefficients for Greece (cubic)
+coefficients_greece_cubic <- coef(lm_model_greece_cubic)
+
+# Display the coefficients for the cubic regression
+coefficients_greece_cubic
+```
+
+```{r}
+#| echo: FALSE
+# Perform regression on the combined dataset
+regression_model_all_countries <- lm(gini_n2 ~ I(GDP_per_capita/10000), data = data_2010)
+
+# Display regression results using huxreg
+huxreg(regression_model_all_countries, statistics = c(N = "nobs", R2 = "r.squared", adjustedR = "adj.r.squared", p.value = "p.value"))
+```
+
+```{r}
+#| echo: FALSE
+#Getting the residual from models
+residuals_original <- resid(regression_model_all_countries)
+
+#Performing the Breusch-Pagan test
+hetero_test_original <- bptest(regression_model_all_countries)
+```
+
+```{r}
 #| label: tbl-ten
 #| tbl-cap: "Hetroskedasticity test for the original model
 print(hetero_test_original)
+```
+
+```{r}
+#| echo: FALSE
+#Getting the residuals from the alternative model
+residuals_alternative_S <- resid(lm_model_spain)
+
+#Performing the Breusch-Pagan test
+hetero_test_spain <- bptest(lm_model_spain)
+
+#Getting the residuals from the alternative model
+residuals_alternative_N <- resid(lm_model_netherlands)
+
+#Performing the Breusch-Pagan test
+hetero_test_netherlands <- bptest(lm_model_netherlands)
+
+#Getting the residuals from the alternative model
+residuals_alternative_G <- resid(lm_model_greece_cubic)
+
+#Performing the Breusch-Pagan test
+hetero_test_greece <- bptest(lm_model_greece_cubic)
 ```
 
 ```{r}
@@ -592,6 +859,36 @@ print(hetero_test_original)
 print(hetero_test_spain)
 print(hetero_test_netherlands)
 print(hetero_test_greece)
+```
+
+```{r}
+#| echo: FALSE
+# Corrected dataset
+Panel_Data <- main_data2 %>%
+  distinct(year, geo, id_nuts0, id_nuts2, GDP_per_capita, population, gini_n2) %>%
+  mutate(GDP_per_capita = GDP_per_capita) %>%
+  mutate(gini_nuts3 = gini_n2 * 100000) %>%
+  select(year, geo, id_nuts0, id_nuts2, population, GDP_per_capita, gini_n2, gini_nuts3) %>%
+  pdata.frame(index = c("id_nuts2","year"))
+```
+
+```{r}
+#| echo: FALSE
+# Model 1: Estimate the effect at Geo level with several indices
+plm1 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year", "id_nuts2"), model = "within") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+
+# Model 2: Estimate the effect at Year level
+plm2 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("year"), model = "within", effect = "individual") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+
+# Model 3: Estimate the effect at NUTS2 level
+plm3 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("id_nuts0"), model = "within") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
+
+# Modell 4: Estimer effekten på kombinert Geo, Year, NUTS2-nivå
+plm4 <- plm(gini_nuts3 ~ GDP_per_capita, data = Panel_Data, index = c("geo", "year", "id_nuts0"), model = "within", effect = "twoways") %>% 
+  coeftest(vcov. = vcovHC, type = "HC1", save = TRUE)
 ```
 
 ```{r}
