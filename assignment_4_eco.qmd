@@ -5,3 +5,15 @@ editor: visual
 ---
 
 ## Eurostat EDA
+
+In this paper, we aim to conduct an explanatory data analysis of various statistics for a diverse set of European countries.
+Our focus will be on exploring sub-national GDP and regional inequities within the chosen nations.
+The countries under examination include Ireland (IE), Poland (PL), Spain (ES), Slovenia (SI), Netherlands (NL), Greece (GR), Norway (NO), and Albania (AL).
+
+The paper will be organized into four distinct parts, each contributing to a comprehensive understanding of the economic landscape.
+In the first part, we delve into sub-national GDP and regional disparities using data sourced from Eurostat.
+Specifically, our analysis will be based on GDP and population statistics spanning the years 2000 to 2020.
+NUTS (Nomenclature of territorial units for statistics) encompasses three levels---NUTS 1, NUTS 2, and NUTS 3, with the latter providing a detailed sub-regional perspective \[\@GlossaryNomenclatureTerritorial2021\].
+
+As we progress through the paper, parts 2, 3, and 4 will unfold gradually, offering a deeper exploration of the chosen countries and their economic dynamics.
+Subsequent sections will build upon the foundation laid in the initial part, allowing for a comprehensive and insightful analysis of the selected European nations.
